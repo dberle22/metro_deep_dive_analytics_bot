@@ -132,20 +132,20 @@ metro_deep_dive_chatbot/
 
 **Owner:** Human / Engineer
 
-- [ ] Install Ollama on local machine: `brew install ollama`
-- [ ] Pull the dev model: `ollama pull llama3.2:3b`
-- [ ] Verify local DuckDB connection is readable:
+- [x] Install Ollama on local machine: `brew install ollama`
+- [x] Pull the dev model: `ollama pull llama3.2:3b`
+- [x] Verify local DuckDB connection is readable:
   ```python
   import duckdb
   con = duckdb.connect("/Users/danberle/Documents/projects/data/duckdb/metro_deep_dive.duckdb", read_only=True)
   con.execute("SHOW TABLES").fetchall()
   ```
-- [ ] Confirm all 9 Gold tables are present and queryable
-- [ ] Confirm R is installed and the visual library renders a test chart from the command line
-- [ ] Create `requirements.txt` with initial deps: `fastapi`, `duckdb`, `python-dotenv`, `openai` (used for Ollama/Groq compatible calls), `pandas`, `pydantic`
-- [ ] Create `.env.example` with all expected env vars documented (no real values)
-- [ ] Create `.env` locally with real values (gitignored)
-- [ ] Stub the `app/`, `semantic_layer/`, `examples/`, `frontend/`, `tests/` directories with placeholder files
+- [x] Confirm all 9 Gold tables are present and queryable
+- [x] Confirm R is installed and the visual library renders a test chart from the command line
+- [x] Create `requirements.txt` with initial deps: `fastapi`, `duckdb`, `python-dotenv`, `openai` (used for Ollama/Groq compatible calls), `pandas`, `pydantic`
+- [x] Create `.env.example` with all expected env vars documented (no real values)
+- [x] Create `.env` locally with real values (gitignored)
+- [x] Stub the `app/`, `semantic_layer/`, `examples/`, `frontend/`, `tests/` directories with placeholder files
 
 **Success check:** `python -c "import duckdb; con = duckdb.connect('...'); print(con.execute('SELECT COUNT(*) FROM gold.population_demographics').fetchone())"` returns a row count.
 
