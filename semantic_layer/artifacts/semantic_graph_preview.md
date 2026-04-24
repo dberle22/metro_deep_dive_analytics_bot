@@ -1,0 +1,432 @@
+# Semantic Graph Preview
+
+Open this file in VS Code and use Markdown preview to render the Mermaid diagram.
+
+```mermaid
+flowchart LR
+  subgraph Tables
+    table_affordability_wide["affordability_wide"]
+    table_economics_gdp_wide["economics_gdp_wide"]
+    table_economics_income_wide["economics_income_wide"]
+    table_economics_industry_wide["economics_industry_wide"]
+    table_economics_labor_wide["economics_labor_wide"]
+    table_housing_core_wide["housing_core_wide"]
+    table_migration_wide["migration_wide"]
+    table_population_demographics["population_demographics"]
+    table_transport_built_form_wide["transport_built_form_wide"]
+  end
+  subgraph Metrics
+    metric_acs_income_pc["acs_income_pc"]
+    metric_annualized_median_rent["annualized_median_rent"]
+    metric_calc_income_pc["calc_income_pc"]
+    metric_dependents_per_worker["dependents_per_worker"]
+    metric_diversity_index["diversity_index"]
+    metric_gini_index["gini_index"]
+    metric_hu_total["hu_total"]
+    metric_income_pc_cagr_5yr["income_pc_cagr_5yr"]
+    metric_income_pc_growth_1yr["income_pc_growth_1yr"]
+    metric_income_pc_growth_5yr["income_pc_growth_5yr"]
+    metric_median_age["median_age"]
+    metric_median_gross_rent["median_gross_rent"]
+    metric_median_hh_income["median_hh_income"]
+    metric_median_home_value["median_home_value"]
+    metric_owner_occ_rate["owner_occ_rate"]
+    metric_pct_age_over_64["pct_age_over_64"]
+    metric_pct_age_under_18["pct_age_under_18"]
+    metric_pct_ba_plus["pct_ba_plus"]
+    metric_pct_hispanic["pct_hispanic"]
+    metric_pct_rent_burden_30plus["pct_rent_burden_30plus"]
+    metric_permits_per_1000_housing_units["permits_per_1000_housing_units"]
+    metric_pi_total["pi_total"]
+    metric_pi_wage_share["pi_wage_share"]
+    metric_pop_growth_1yr["pop_growth_1yr"]
+    metric_pop_growth_3yr["pop_growth_3yr"]
+    metric_pop_growth_5yr["pop_growth_5yr"]
+    metric_pop_total["pop_total"]
+    metric_pov_rate["pov_rate"]
+    metric_rent_to_income["rent_to_income"]
+    metric_renter_occ_rate["renter_occ_rate"]
+    metric_vacancy_rate["vacancy_rate"]
+    metric_value_to_income["value_to_income"]
+  end
+  subgraph Geographies
+    geo_level_cbsa["cbsa"]
+    geo_level_county["county"]
+    geo_level_division["division"]
+    geo_level_place["Place"]
+    geo_level_region["region"]
+    geo_level_state["state"]
+    geo_level_tract["tract"]
+    geo_level_us["United States"]
+    geo_level_zcta["zcta"]
+  end
+  subgraph Templates
+    template_benchmark["benchmark"]
+    template_compare_selected["compare_selected"]
+    template_distribution["distribution"]
+    template_growth["growth"]
+    template_ranking["ranking"]
+    template_trend["trend"]
+  end
+  subgraph Question Types
+    question_type_benchmark["benchmark"]
+    question_type_comparison["comparison"]
+    question_type_correlation["correlation"]
+    question_type_distribution["distribution"]
+    question_type_ranking["ranking"]
+    question_type_trend["trend"]
+  end
+  subgraph Chart Types
+    chart_type_bar["bar"]
+    chart_type_boxplot["boxplot"]
+    chart_type_heatmap_table["heatmap_table"]
+    chart_type_hexbin["hexbin"]
+    chart_type_line["line"]
+    chart_type_scatter["scatter"]
+    chart_type_slopegraph["slopegraph"]
+    chart_type_strength_strip["strength_strip"]
+  end
+  geo_level_county -->|rolls up to| geo_level_cbsa
+  geo_level_county -->|rolls up to| geo_level_state
+  geo_level_division -->|rolls up to| geo_level_region
+  geo_level_state -->|rolls up to| geo_level_division
+  geo_level_state -->|rolls up to| geo_level_region
+  geo_level_tract -->|rolls up to| geo_level_county
+  geo_level_zcta -->|rolls up to| geo_level_cbsa
+  geo_level_zcta -->|rolls up to| geo_level_county
+  geo_level_zcta -->|rolls up to| geo_level_tract
+  metric_acs_income_pc -->|from table| table_economics_income_wide
+  metric_acs_income_pc -->|valid for| geo_level_cbsa
+  metric_acs_income_pc -->|valid for| geo_level_county
+  metric_acs_income_pc -->|valid for| geo_level_state
+  metric_annualized_median_rent -->|from table| table_housing_core_wide
+  metric_annualized_median_rent -->|valid for| geo_level_cbsa
+  metric_annualized_median_rent -->|valid for| geo_level_county
+  metric_annualized_median_rent -->|valid for| geo_level_division
+  metric_annualized_median_rent -->|valid for| geo_level_place
+  metric_annualized_median_rent -->|valid for| geo_level_region
+  metric_annualized_median_rent -->|valid for| geo_level_state
+  metric_annualized_median_rent -->|valid for| geo_level_tract
+  metric_annualized_median_rent -->|valid for| geo_level_us
+  metric_annualized_median_rent -->|valid for| geo_level_zcta
+  metric_calc_income_pc -->|from table| table_economics_income_wide
+  metric_calc_income_pc -->|valid for| geo_level_cbsa
+  metric_calc_income_pc -->|valid for| geo_level_county
+  metric_calc_income_pc -->|valid for| geo_level_state
+  metric_dependents_per_worker -->|from table| table_population_demographics
+  metric_dependents_per_worker -->|valid for| geo_level_cbsa
+  metric_dependents_per_worker -->|valid for| geo_level_county
+  metric_dependents_per_worker -->|valid for| geo_level_division
+  metric_dependents_per_worker -->|valid for| geo_level_place
+  metric_dependents_per_worker -->|valid for| geo_level_region
+  metric_dependents_per_worker -->|valid for| geo_level_state
+  metric_dependents_per_worker -->|valid for| geo_level_tract
+  metric_dependents_per_worker -->|valid for| geo_level_us
+  metric_dependents_per_worker -->|valid for| geo_level_zcta
+  metric_diversity_index -->|from table| table_population_demographics
+  metric_diversity_index -->|valid for| geo_level_cbsa
+  metric_diversity_index -->|valid for| geo_level_county
+  metric_diversity_index -->|valid for| geo_level_division
+  metric_diversity_index -->|valid for| geo_level_place
+  metric_diversity_index -->|valid for| geo_level_region
+  metric_diversity_index -->|valid for| geo_level_state
+  metric_diversity_index -->|valid for| geo_level_tract
+  metric_diversity_index -->|valid for| geo_level_us
+  metric_diversity_index -->|valid for| geo_level_zcta
+  metric_gini_index -->|from table| table_economics_income_wide
+  metric_gini_index -->|valid for| geo_level_cbsa
+  metric_gini_index -->|valid for| geo_level_county
+  metric_gini_index -->|valid for| geo_level_state
+  metric_hu_total -->|from table| table_housing_core_wide
+  metric_hu_total -->|valid for| geo_level_cbsa
+  metric_hu_total -->|valid for| geo_level_county
+  metric_hu_total -->|valid for| geo_level_division
+  metric_hu_total -->|valid for| geo_level_place
+  metric_hu_total -->|valid for| geo_level_region
+  metric_hu_total -->|valid for| geo_level_state
+  metric_hu_total -->|valid for| geo_level_tract
+  metric_hu_total -->|valid for| geo_level_us
+  metric_hu_total -->|valid for| geo_level_zcta
+  metric_income_pc_cagr_5yr -->|from table| table_economics_income_wide
+  metric_income_pc_cagr_5yr -->|valid for| geo_level_cbsa
+  metric_income_pc_cagr_5yr -->|valid for| geo_level_county
+  metric_income_pc_cagr_5yr -->|valid for| geo_level_state
+  metric_income_pc_growth_1yr -->|from table| table_economics_income_wide
+  metric_income_pc_growth_1yr -->|valid for| geo_level_cbsa
+  metric_income_pc_growth_1yr -->|valid for| geo_level_county
+  metric_income_pc_growth_1yr -->|valid for| geo_level_state
+  metric_income_pc_growth_5yr -->|from table| table_economics_income_wide
+  metric_income_pc_growth_5yr -->|valid for| geo_level_cbsa
+  metric_income_pc_growth_5yr -->|valid for| geo_level_county
+  metric_income_pc_growth_5yr -->|valid for| geo_level_state
+  metric_median_age -->|from table| table_population_demographics
+  metric_median_age -->|valid for| geo_level_cbsa
+  metric_median_age -->|valid for| geo_level_county
+  metric_median_age -->|valid for| geo_level_division
+  metric_median_age -->|valid for| geo_level_place
+  metric_median_age -->|valid for| geo_level_region
+  metric_median_age -->|valid for| geo_level_state
+  metric_median_age -->|valid for| geo_level_tract
+  metric_median_age -->|valid for| geo_level_us
+  metric_median_age -->|valid for| geo_level_zcta
+  metric_median_gross_rent -->|from table| table_housing_core_wide
+  metric_median_gross_rent -->|valid for| geo_level_cbsa
+  metric_median_gross_rent -->|valid for| geo_level_county
+  metric_median_gross_rent -->|valid for| geo_level_division
+  metric_median_gross_rent -->|valid for| geo_level_place
+  metric_median_gross_rent -->|valid for| geo_level_region
+  metric_median_gross_rent -->|valid for| geo_level_state
+  metric_median_gross_rent -->|valid for| geo_level_tract
+  metric_median_gross_rent -->|valid for| geo_level_us
+  metric_median_gross_rent -->|valid for| geo_level_zcta
+  metric_median_hh_income -->|from table| table_economics_income_wide
+  metric_median_hh_income -->|valid for| geo_level_cbsa
+  metric_median_hh_income -->|valid for| geo_level_county
+  metric_median_hh_income -->|valid for| geo_level_state
+  metric_median_home_value -->|from table| table_housing_core_wide
+  metric_median_home_value -->|valid for| geo_level_cbsa
+  metric_median_home_value -->|valid for| geo_level_county
+  metric_median_home_value -->|valid for| geo_level_division
+  metric_median_home_value -->|valid for| geo_level_place
+  metric_median_home_value -->|valid for| geo_level_region
+  metric_median_home_value -->|valid for| geo_level_state
+  metric_median_home_value -->|valid for| geo_level_tract
+  metric_median_home_value -->|valid for| geo_level_us
+  metric_median_home_value -->|valid for| geo_level_zcta
+  metric_owner_occ_rate -->|from table| table_housing_core_wide
+  metric_owner_occ_rate -->|valid for| geo_level_cbsa
+  metric_owner_occ_rate -->|valid for| geo_level_county
+  metric_owner_occ_rate -->|valid for| geo_level_division
+  metric_owner_occ_rate -->|valid for| geo_level_place
+  metric_owner_occ_rate -->|valid for| geo_level_region
+  metric_owner_occ_rate -->|valid for| geo_level_state
+  metric_owner_occ_rate -->|valid for| geo_level_tract
+  metric_owner_occ_rate -->|valid for| geo_level_us
+  metric_owner_occ_rate -->|valid for| geo_level_zcta
+  metric_pct_age_over_64 -->|from table| table_population_demographics
+  metric_pct_age_over_64 -->|valid for| geo_level_cbsa
+  metric_pct_age_over_64 -->|valid for| geo_level_county
+  metric_pct_age_over_64 -->|valid for| geo_level_division
+  metric_pct_age_over_64 -->|valid for| geo_level_place
+  metric_pct_age_over_64 -->|valid for| geo_level_region
+  metric_pct_age_over_64 -->|valid for| geo_level_state
+  metric_pct_age_over_64 -->|valid for| geo_level_tract
+  metric_pct_age_over_64 -->|valid for| geo_level_us
+  metric_pct_age_over_64 -->|valid for| geo_level_zcta
+  metric_pct_age_under_18 -->|from table| table_population_demographics
+  metric_pct_age_under_18 -->|valid for| geo_level_cbsa
+  metric_pct_age_under_18 -->|valid for| geo_level_county
+  metric_pct_age_under_18 -->|valid for| geo_level_division
+  metric_pct_age_under_18 -->|valid for| geo_level_place
+  metric_pct_age_under_18 -->|valid for| geo_level_region
+  metric_pct_age_under_18 -->|valid for| geo_level_state
+  metric_pct_age_under_18 -->|valid for| geo_level_tract
+  metric_pct_age_under_18 -->|valid for| geo_level_us
+  metric_pct_age_under_18 -->|valid for| geo_level_zcta
+  metric_pct_ba_plus -->|from table| table_population_demographics
+  metric_pct_ba_plus -->|valid for| geo_level_cbsa
+  metric_pct_ba_plus -->|valid for| geo_level_county
+  metric_pct_ba_plus -->|valid for| geo_level_division
+  metric_pct_ba_plus -->|valid for| geo_level_place
+  metric_pct_ba_plus -->|valid for| geo_level_region
+  metric_pct_ba_plus -->|valid for| geo_level_state
+  metric_pct_ba_plus -->|valid for| geo_level_tract
+  metric_pct_ba_plus -->|valid for| geo_level_us
+  metric_pct_ba_plus -->|valid for| geo_level_zcta
+  metric_pct_hispanic -->|from table| table_population_demographics
+  metric_pct_hispanic -->|valid for| geo_level_cbsa
+  metric_pct_hispanic -->|valid for| geo_level_county
+  metric_pct_hispanic -->|valid for| geo_level_division
+  metric_pct_hispanic -->|valid for| geo_level_place
+  metric_pct_hispanic -->|valid for| geo_level_region
+  metric_pct_hispanic -->|valid for| geo_level_state
+  metric_pct_hispanic -->|valid for| geo_level_tract
+  metric_pct_hispanic -->|valid for| geo_level_us
+  metric_pct_hispanic -->|valid for| geo_level_zcta
+  metric_pct_rent_burden_30plus -->|from table| table_housing_core_wide
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_cbsa
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_county
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_division
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_place
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_region
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_state
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_tract
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_us
+  metric_pct_rent_burden_30plus -->|valid for| geo_level_zcta
+  metric_permits_per_1000_housing_units -->|from table| table_housing_core_wide
+  metric_permits_per_1000_housing_units -->|valid for| geo_level_cbsa
+  metric_permits_per_1000_housing_units -->|valid for| geo_level_county
+  metric_permits_per_1000_housing_units -->|valid for| geo_level_place
+  metric_permits_per_1000_housing_units -->|valid for| geo_level_state
+  metric_pi_total -->|from table| table_economics_income_wide
+  metric_pi_total -->|valid for| geo_level_cbsa
+  metric_pi_total -->|valid for| geo_level_county
+  metric_pi_total -->|valid for| geo_level_state
+  metric_pi_wage_share -->|from table| table_economics_income_wide
+  metric_pi_wage_share -->|valid for| geo_level_cbsa
+  metric_pi_wage_share -->|valid for| geo_level_county
+  metric_pi_wage_share -->|valid for| geo_level_state
+  metric_pop_growth_1yr -->|from table| table_population_demographics
+  metric_pop_growth_1yr -->|valid for| geo_level_cbsa
+  metric_pop_growth_1yr -->|valid for| geo_level_county
+  metric_pop_growth_1yr -->|valid for| geo_level_division
+  metric_pop_growth_1yr -->|valid for| geo_level_place
+  metric_pop_growth_1yr -->|valid for| geo_level_region
+  metric_pop_growth_1yr -->|valid for| geo_level_state
+  metric_pop_growth_1yr -->|valid for| geo_level_tract
+  metric_pop_growth_1yr -->|valid for| geo_level_us
+  metric_pop_growth_1yr -->|valid for| geo_level_zcta
+  metric_pop_growth_3yr -->|from table| table_population_demographics
+  metric_pop_growth_3yr -->|valid for| geo_level_cbsa
+  metric_pop_growth_3yr -->|valid for| geo_level_county
+  metric_pop_growth_3yr -->|valid for| geo_level_division
+  metric_pop_growth_3yr -->|valid for| geo_level_place
+  metric_pop_growth_3yr -->|valid for| geo_level_region
+  metric_pop_growth_3yr -->|valid for| geo_level_state
+  metric_pop_growth_3yr -->|valid for| geo_level_tract
+  metric_pop_growth_3yr -->|valid for| geo_level_us
+  metric_pop_growth_3yr -->|valid for| geo_level_zcta
+  metric_pop_growth_5yr -->|from table| table_population_demographics
+  metric_pop_growth_5yr -->|valid for| geo_level_cbsa
+  metric_pop_growth_5yr -->|valid for| geo_level_county
+  metric_pop_growth_5yr -->|valid for| geo_level_division
+  metric_pop_growth_5yr -->|valid for| geo_level_place
+  metric_pop_growth_5yr -->|valid for| geo_level_region
+  metric_pop_growth_5yr -->|valid for| geo_level_state
+  metric_pop_growth_5yr -->|valid for| geo_level_tract
+  metric_pop_growth_5yr -->|valid for| geo_level_us
+  metric_pop_growth_5yr -->|valid for| geo_level_zcta
+  metric_pop_total -->|from table| table_population_demographics
+  metric_pop_total -->|valid for| geo_level_cbsa
+  metric_pop_total -->|valid for| geo_level_county
+  metric_pop_total -->|valid for| geo_level_division
+  metric_pop_total -->|valid for| geo_level_place
+  metric_pop_total -->|valid for| geo_level_region
+  metric_pop_total -->|valid for| geo_level_state
+  metric_pop_total -->|valid for| geo_level_tract
+  metric_pop_total -->|valid for| geo_level_us
+  metric_pop_total -->|valid for| geo_level_zcta
+  metric_pov_rate -->|from table| table_economics_income_wide
+  metric_pov_rate -->|valid for| geo_level_cbsa
+  metric_pov_rate -->|valid for| geo_level_county
+  metric_pov_rate -->|valid for| geo_level_state
+  metric_rent_to_income -->|from table| table_housing_core_wide
+  metric_rent_to_income -->|valid for| geo_level_cbsa
+  metric_rent_to_income -->|valid for| geo_level_county
+  metric_rent_to_income -->|valid for| geo_level_division
+  metric_rent_to_income -->|valid for| geo_level_place
+  metric_rent_to_income -->|valid for| geo_level_region
+  metric_rent_to_income -->|valid for| geo_level_state
+  metric_rent_to_income -->|valid for| geo_level_tract
+  metric_rent_to_income -->|valid for| geo_level_us
+  metric_rent_to_income -->|valid for| geo_level_zcta
+  metric_renter_occ_rate -->|from table| table_housing_core_wide
+  metric_renter_occ_rate -->|valid for| geo_level_cbsa
+  metric_renter_occ_rate -->|valid for| geo_level_county
+  metric_renter_occ_rate -->|valid for| geo_level_division
+  metric_renter_occ_rate -->|valid for| geo_level_place
+  metric_renter_occ_rate -->|valid for| geo_level_region
+  metric_renter_occ_rate -->|valid for| geo_level_state
+  metric_renter_occ_rate -->|valid for| geo_level_tract
+  metric_renter_occ_rate -->|valid for| geo_level_us
+  metric_renter_occ_rate -->|valid for| geo_level_zcta
+  metric_vacancy_rate -->|from table| table_housing_core_wide
+  metric_vacancy_rate -->|valid for| geo_level_cbsa
+  metric_vacancy_rate -->|valid for| geo_level_county
+  metric_vacancy_rate -->|valid for| geo_level_division
+  metric_vacancy_rate -->|valid for| geo_level_place
+  metric_vacancy_rate -->|valid for| geo_level_region
+  metric_vacancy_rate -->|valid for| geo_level_state
+  metric_vacancy_rate -->|valid for| geo_level_tract
+  metric_vacancy_rate -->|valid for| geo_level_us
+  metric_vacancy_rate -->|valid for| geo_level_zcta
+  metric_value_to_income -->|from table| table_housing_core_wide
+  metric_value_to_income -->|valid for| geo_level_cbsa
+  metric_value_to_income -->|valid for| geo_level_county
+  metric_value_to_income -->|valid for| geo_level_division
+  metric_value_to_income -->|valid for| geo_level_place
+  metric_value_to_income -->|valid for| geo_level_region
+  metric_value_to_income -->|valid for| geo_level_state
+  metric_value_to_income -->|valid for| geo_level_tract
+  metric_value_to_income -->|valid for| geo_level_us
+  metric_value_to_income -->|valid for| geo_level_zcta
+  question_type_benchmark -->|approved| chart_type_bar
+  question_type_benchmark -->|fallback| chart_type_strength_strip
+  question_type_benchmark -->|uses| template_benchmark
+  question_type_benchmark -->|uses| template_growth
+  question_type_comparison -->|approved| chart_type_bar
+  question_type_comparison -->|approved| chart_type_slopegraph
+  question_type_comparison -->|fallback| chart_type_heatmap_table
+  question_type_comparison -->|uses| template_compare_selected
+  question_type_comparison -->|uses| template_growth
+  question_type_correlation -->|approved| chart_type_scatter
+  question_type_correlation -->|fallback| chart_type_hexbin
+  question_type_distribution -->|approved| chart_type_boxplot
+  question_type_distribution -->|fallback| chart_type_heatmap_table
+  question_type_distribution -->|uses| template_distribution
+  question_type_ranking -->|approved| chart_type_bar
+  question_type_ranking -->|fallback| chart_type_heatmap_table
+  question_type_ranking -->|uses| template_growth
+  question_type_ranking -->|uses| template_ranking
+  question_type_trend -->|approved| chart_type_line
+  question_type_trend -->|fallback| chart_type_slopegraph
+  question_type_trend -->|uses| template_growth
+  question_type_trend -->|uses| template_trend
+  table_affordability_wide -->|supports| geo_level_cbsa
+  table_affordability_wide -->|supports| geo_level_county
+  table_affordability_wide -->|supports| geo_level_place
+  table_affordability_wide -->|supports| geo_level_state
+  table_affordability_wide -->|supports| geo_level_tract
+  table_affordability_wide -->|supports| geo_level_zcta
+  table_economics_gdp_wide -->|supports| geo_level_cbsa
+  table_economics_gdp_wide -->|supports| geo_level_county
+  table_economics_gdp_wide -->|supports| geo_level_state
+  table_economics_income_wide -->|supports| geo_level_cbsa
+  table_economics_income_wide -->|supports| geo_level_county
+  table_economics_income_wide -->|supports| geo_level_state
+  table_economics_industry_wide -->|supports| geo_level_cbsa
+  table_economics_industry_wide -->|supports| geo_level_county
+  table_economics_industry_wide -->|supports| geo_level_state
+  table_economics_labor_wide -->|supports| geo_level_cbsa
+  table_economics_labor_wide -->|supports| geo_level_county
+  table_economics_labor_wide -->|supports| geo_level_state
+  table_housing_core_wide -->|joins to| table_economics_income_wide
+  table_housing_core_wide -->|supports| geo_level_cbsa
+  table_housing_core_wide -->|supports| geo_level_county
+  table_housing_core_wide -->|supports| geo_level_division
+  table_housing_core_wide -->|supports| geo_level_place
+  table_housing_core_wide -->|supports| geo_level_region
+  table_housing_core_wide -->|supports| geo_level_state
+  table_housing_core_wide -->|supports| geo_level_tract
+  table_housing_core_wide -->|supports| geo_level_us
+  table_housing_core_wide -->|supports| geo_level_zcta
+  table_migration_wide -->|supports| geo_level_cbsa
+  table_migration_wide -->|supports| geo_level_county
+  table_migration_wide -->|supports| geo_level_division
+  table_migration_wide -->|supports| geo_level_place
+  table_migration_wide -->|supports| geo_level_region
+  table_migration_wide -->|supports| geo_level_state
+  table_migration_wide -->|supports| geo_level_tract
+  table_migration_wide -->|supports| geo_level_us
+  table_migration_wide -->|supports| geo_level_zcta
+  table_population_demographics -->|joins to| table_economics_income_wide
+  table_population_demographics -->|joins to| table_housing_core_wide
+  table_population_demographics -->|supports| geo_level_cbsa
+  table_population_demographics -->|supports| geo_level_county
+  table_population_demographics -->|supports| geo_level_division
+  table_population_demographics -->|supports| geo_level_place
+  table_population_demographics -->|supports| geo_level_region
+  table_population_demographics -->|supports| geo_level_state
+  table_population_demographics -->|supports| geo_level_tract
+  table_population_demographics -->|supports| geo_level_us
+  table_population_demographics -->|supports| geo_level_zcta
+  table_transport_built_form_wide -->|supports| geo_level_cbsa
+  table_transport_built_form_wide -->|supports| geo_level_county
+  table_transport_built_form_wide -->|supports| geo_level_division
+  table_transport_built_form_wide -->|supports| geo_level_place
+  table_transport_built_form_wide -->|supports| geo_level_region
+  table_transport_built_form_wide -->|supports| geo_level_state
+  table_transport_built_form_wide -->|supports| geo_level_tract
+  table_transport_built_form_wide -->|supports| geo_level_us
+  table_transport_built_form_wide -->|supports| geo_level_zcta
+```

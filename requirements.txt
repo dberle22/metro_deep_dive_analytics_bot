@@ -4,3 +4,5 @@ python-dotenv
 openai
 pandas
 pydantic
+PyYAML
+networkx

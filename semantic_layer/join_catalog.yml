@@ -1,2 +1,83 @@
-# Phase 0 placeholder.
-# Phase 1 will populate the semantic layer catalogs.
+version: 1
+catalog_name: join_catalog
+description: Explicitly approved joins between active Gold marts.
+join_rules:
+  - join_id: population_to_housing
+    left_table: population_demographics
+    right_table: housing_core_wide
+    join_type: inner_or_left
+    join_keys:
+      - left: geo_level
+        right: geo_level
+      - left: geo_id
+        right: geo_id
+      - left: year
+        right: year
+    grain_requirement: same geography grain and same year grain
+    compatibility: full
+    allowed_use_cases:
+      - combine demographic and housing metrics for the same geography-year rows
+      - benchmark or ranking queries that compare metrics across the same grain
+    caveats:
+      - Avoid duplicate metric selection when both tables expose population or income context fields.
+      - Housing coverage follows ACS base grain, but some derived HUD and BPS columns are sparse.
+    status: active
+
+  - join_id: population_to_income
+    left_table: population_demographics
+    right_table: economics_income_wide
+    join_type: inner_or_left
+    join_keys:
+      - left: geo_level
+        right: geo_level
+      - left: geo_id
+        right: geo_id
+      - left: year
+        right: year
+    grain_requirement: same geography grain and same year grain
+    compatibility: partial
+    allowed_use_cases:
+      - combine demographic and income metrics at state, cbsa, or county grain
+      - support benchmark and ranking workflows limited to BEA-supported income geographies
+    caveats:
+      - economics_income_wide only supports state, cbsa, and county.
+      - For region, division, us, place, zcta, and tract questions, do not plan this join.
+    status: active
+
+  - join_id: housing_to_income
+    left_table: housing_core_wide
+    right_table: economics_income_wide
+    join_type: inner_or_left
+    join_keys:
+      - left: geo_level
+        right: geo_level
+      - left: geo_id
+        right: geo_id
+      - left: year
+        right: year
+    grain_requirement: same geography grain and same year grain
+    compatibility: partial
+    allowed_use_cases:
+      - combine housing affordability metrics with income and earnings metrics
+      - compare housing and income measures for the same state, cbsa, or county
+    caveats:
+      - housing_core_wide already contains selected income context columns; prefer the housing table alone when those fields are sufficient.
+      - Join only when a BEA-derived income field is required.
+    status: active
+
+grain_compatibility_rules:
+  - rule_id: same_grain_required
+    description: Default joins require identical geo_level, geo_id, and year keys on both sides.
+    enforcement: required
+
+  - rule_id: no_implicit_rollups
+    description: The planner may not join tables across different geo levels by inferring rollups.
+    enforcement: required
+
+  - rule_id: no_weighted_crosswalk_joins_in_mvp
+    description: Weighted geography crosswalks such as zcta-to-county or zcta-to-cbsa are not approved for default semantic joins.
+    enforcement: required
+
+  - rule_id: choose_single_primary_fact_table
+    description: Queries should start from the table that natively owns the requested metric whenever possible.
+    enforcement: recommended

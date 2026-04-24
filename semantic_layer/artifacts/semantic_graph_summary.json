@@ -1,0 +1,22 @@
+{
+  "node_count": 70,
+  "edge_count": 343,
+  "node_kinds": {
+    "table": 9,
+    "geo_level": 9,
+    "metric": 32,
+    "template": 6,
+    "question_type": 6,
+    "chart_type": 8
+  },
+  "edge_relations": {
+    "supports_geo_level": 54,
+    "joins_to": 3,
+    "rolls_up_to": 9,
+    "from_table": 32,
+    "valid_for_geo_level": 223,
+    "uses_template": 9,
+    "approved_chart": 7,
+    "fallback_chart": 6
+  }
+}

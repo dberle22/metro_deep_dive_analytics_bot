@@ -1,0 +1,2689 @@
+{
+  "directed": true,
+  "multigraph": true,
+  "graph": {
+    "name": "semantic_layer"
+  },
+  "nodes": [
+    {
+      "kind": "table",
+      "value": "population_demographics",
+      "label": "population_demographics",
+      "subject_area": "population",
+      "status": "active",
+      "id": "table:population_demographics"
+    },
+    {
+      "kind": "geo_level",
+      "value": "us",
+      "label": "United States",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 1,
+      "id": "geo_level:us"
+    },
+    {
+      "kind": "geo_level",
+      "value": "region",
+      "label": "region",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 2,
+      "id": "geo_level:region"
+    },
+    {
+      "kind": "geo_level",
+      "value": "division",
+      "label": "division",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 3,
+      "id": "geo_level:division"
+    },
+    {
+      "kind": "geo_level",
+      "value": "state",
+      "label": "state",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 4,
+      "id": "geo_level:state"
+    },
+    {
+      "kind": "geo_level",
+      "value": "cbsa",
+      "label": "cbsa",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 5,
+      "id": "geo_level:cbsa"
+    },
+    {
+      "kind": "geo_level",
+      "value": "county",
+      "label": "county",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 6,
+      "id": "geo_level:county"
+    },
+    {
+      "kind": "geo_level",
+      "value": "place",
+      "label": "Place",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 7,
+      "id": "geo_level:place"
+    },
+    {
+      "kind": "geo_level",
+      "value": "zcta",
+      "label": "zcta",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 8,
+      "id": "geo_level:zcta"
+    },
+    {
+      "kind": "geo_level",
+      "value": "tract",
+      "label": "tract",
+      "supported_in_mvp": true,
+      "hierarchy_rank": 9,
+      "id": "geo_level:tract"
+    },
+    {
+      "kind": "table",
+      "value": "housing_core_wide",
+      "label": "housing_core_wide",
+      "subject_area": "housing",
+      "status": "active",
+      "id": "table:housing_core_wide"
+    },
+    {
+      "kind": "table",
+      "value": "economics_income_wide",
+      "label": "economics_income_wide",
+      "subject_area": "income",
+      "status": "active",
+      "id": "table:economics_income_wide"
+    },
+    {
+      "kind": "table",
+      "value": "affordability_wide",
+      "label": "affordability_wide",
+      "subject_area": "housing",
+      "status": "deferred",
+      "id": "table:affordability_wide"
+    },
+    {
+      "kind": "table",
+      "value": "migration_wide",
+      "label": "migration_wide",
+      "subject_area": "migration",
+      "status": "deferred",
+      "id": "table:migration_wide"
+    },
+    {
+      "kind": "table",
+      "value": "transport_built_form_wide",
+      "label": "transport_built_form_wide",
+      "subject_area": "transport",
+      "status": "deferred",
+      "id": "table:transport_built_form_wide"
+    },
+    {
+      "kind": "table",
+      "value": "economics_gdp_wide",
+      "label": "economics_gdp_wide",
+      "subject_area": "economy",
+      "status": "deferred",
+      "id": "table:economics_gdp_wide"
+    },
+    {
+      "kind": "table",
+      "value": "economics_labor_wide",
+      "label": "economics_labor_wide",
+      "subject_area": "labor",
+      "status": "deferred",
+      "id": "table:economics_labor_wide"
+    },
+    {
+      "kind": "table",
+      "value": "economics_industry_wide",
+      "label": "economics_industry_wide",
+      "subject_area": "economy",
+      "status": "deferred",
+      "id": "table:economics_industry_wide"
+    },
+    {
+      "kind": "metric",
+      "value": "pop_total",
+      "label": "pop_total",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:pop_total"
+    },
+    {
+      "kind": "metric",
+      "value": "pop_growth_1yr",
+      "label": "pop_growth_1yr",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pop_growth_1yr"
+    },
+    {
+      "kind": "metric",
+      "value": "pop_growth_3yr",
+      "label": "pop_growth_3yr",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pop_growth_3yr"
+    },
+    {
+      "kind": "metric",
+      "value": "pop_growth_5yr",
+      "label": "pop_growth_5yr",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pop_growth_5yr"
+    },
+    {
+      "kind": "metric",
+      "value": "median_age",
+      "label": "median_age",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:median_age"
+    },
+    {
+      "kind": "metric",
+      "value": "pct_age_under_18",
+      "label": "pct_age_under_18",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pct_age_under_18"
+    },
+    {
+      "kind": "metric",
+      "value": "pct_age_over_64",
+      "label": "pct_age_over_64",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pct_age_over_64"
+    },
+    {
+      "kind": "metric",
+      "value": "dependents_per_worker",
+      "label": "dependents_per_worker",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:dependents_per_worker"
+    },
+    {
+      "kind": "metric",
+      "value": "pct_hispanic",
+      "label": "pct_hispanic",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pct_hispanic"
+    },
+    {
+      "kind": "metric",
+      "value": "diversity_index",
+      "label": "diversity_index",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:diversity_index"
+    },
+    {
+      "kind": "metric",
+      "value": "pct_ba_plus",
+      "label": "pct_ba_plus",
+      "subject_area": "population",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pct_ba_plus"
+    },
+    {
+      "kind": "metric",
+      "value": "hu_total",
+      "label": "hu_total",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:hu_total"
+    },
+    {
+      "kind": "metric",
+      "value": "vacancy_rate",
+      "label": "vacancy_rate",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:vacancy_rate"
+    },
+    {
+      "kind": "metric",
+      "value": "owner_occ_rate",
+      "label": "owner_occ_rate",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:owner_occ_rate"
+    },
+    {
+      "kind": "metric",
+      "value": "renter_occ_rate",
+      "label": "renter_occ_rate",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:renter_occ_rate"
+    },
+    {
+      "kind": "metric",
+      "value": "median_gross_rent",
+      "label": "median_gross_rent",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:median_gross_rent"
+    },
+    {
+      "kind": "metric",
+      "value": "annualized_median_rent",
+      "label": "annualized_median_rent",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:annualized_median_rent"
+    },
+    {
+      "kind": "metric",
+      "value": "median_home_value",
+      "label": "median_home_value",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:median_home_value"
+    },
+    {
+      "kind": "metric",
+      "value": "pct_rent_burden_30plus",
+      "label": "pct_rent_burden_30plus",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pct_rent_burden_30plus"
+    },
+    {
+      "kind": "metric",
+      "value": "rent_to_income",
+      "label": "rent_to_income",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:rent_to_income"
+    },
+    {
+      "kind": "metric",
+      "value": "value_to_income",
+      "label": "value_to_income",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:value_to_income"
+    },
+    {
+      "kind": "metric",
+      "value": "permits_per_1000_housing_units",
+      "label": "permits_per_1000_housing_units",
+      "subject_area": "housing",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:permits_per_1000_housing_units"
+    },
+    {
+      "kind": "metric",
+      "value": "median_hh_income",
+      "label": "median_hh_income",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:median_hh_income"
+    },
+    {
+      "kind": "metric",
+      "value": "acs_income_pc",
+      "label": "acs_income_pc",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:acs_income_pc"
+    },
+    {
+      "kind": "metric",
+      "value": "pov_rate",
+      "label": "pov_rate",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pov_rate"
+    },
+    {
+      "kind": "metric",
+      "value": "gini_index",
+      "label": "gini_index",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:gini_index"
+    },
+    {
+      "kind": "metric",
+      "value": "pi_total",
+      "label": "pi_total",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:pi_total"
+    },
+    {
+      "kind": "metric",
+      "value": "calc_income_pc",
+      "label": "calc_income_pc",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": true,
+      "id": "metric:calc_income_pc"
+    },
+    {
+      "kind": "metric",
+      "value": "income_pc_growth_1yr",
+      "label": "income_pc_growth_1yr",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:income_pc_growth_1yr"
+    },
+    {
+      "kind": "metric",
+      "value": "income_pc_growth_5yr",
+      "label": "income_pc_growth_5yr",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:income_pc_growth_5yr"
+    },
+    {
+      "kind": "metric",
+      "value": "income_pc_cagr_5yr",
+      "label": "income_pc_cagr_5yr",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:income_pc_cagr_5yr"
+    },
+    {
+      "kind": "metric",
+      "value": "pi_wage_share",
+      "label": "pi_wage_share",
+      "subject_area": "income",
+      "status": "active",
+      "growth_eligible": false,
+      "id": "metric:pi_wage_share"
+    },
+    {
+      "kind": "template",
+      "value": "ranking",
+      "label": "ranking",
+      "id": "template:ranking"
+    },
+    {
+      "kind": "question_type",
+      "value": "ranking",
+      "label": "ranking",
+      "id": "question_type:ranking"
+    },
+    {
+      "kind": "template",
+      "value": "trend",
+      "label": "trend",
+      "id": "template:trend"
+    },
+    {
+      "kind": "question_type",
+      "value": "trend",
+      "label": "trend",
+      "id": "question_type:trend"
+    },
+    {
+      "kind": "template",
+      "value": "compare_selected",
+      "label": "compare_selected",
+      "id": "template:compare_selected"
+    },
+    {
+      "kind": "question_type",
+      "value": "comparison",
+      "label": "comparison",
+      "id": "question_type:comparison"
+    },
+    {
+      "kind": "template",
+      "value": "distribution",
+      "label": "distribution",
+      "id": "template:distribution"
+    },
+    {
+      "kind": "question_type",
+      "value": "distribution",
+      "label": "distribution",
+      "id": "question_type:distribution"
+    },
+    {
+      "kind": "template",
+      "value": "benchmark",
+      "label": "benchmark",
+      "id": "template:benchmark"
+    },
+    {
+      "kind": "question_type",
+      "value": "benchmark",
+      "label": "benchmark",
+      "id": "question_type:benchmark"
+    },
+    {
+      "kind": "template",
+      "value": "growth",
+      "label": "growth",
+      "id": "template:growth"
+    },
+    {
+      "kind": "chart_type",
+      "value": "bar",
+      "label": "bar",
+      "id": "chart_type:bar"
+    },
+    {
+      "kind": "chart_type",
+      "value": "heatmap_table",
+      "label": "heatmap_table",
+      "id": "chart_type:heatmap_table"
+    },
+    {
+      "kind": "chart_type",
+      "value": "line",
+      "label": "line",
+      "id": "chart_type:line"
+    },
+    {
+      "kind": "chart_type",
+      "value": "slopegraph",
+      "label": "slopegraph",
+      "id": "chart_type:slopegraph"
+    },
+    {
+      "kind": "chart_type",
+      "value": "boxplot",
+      "label": "boxplot",
+      "id": "chart_type:boxplot"
+    },
+    {
+      "kind": "chart_type",
+      "value": "strength_strip",
+      "label": "strength_strip",
+      "id": "chart_type:strength_strip"
+    },
+    {
+      "kind": "question_type",
+      "value": "correlation",
+      "label": "correlation",
+      "id": "question_type:correlation"
+    },
+    {
+      "kind": "chart_type",
+      "value": "scatter",
+      "label": "scatter",
+      "id": "chart_type:scatter"
+    },
+    {
+      "kind": "chart_type",
+      "value": "hexbin",
+      "label": "hexbin",
+      "id": "chart_type:hexbin"
+    }
+  ],
+  "links": [
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:population_demographics",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "joins_to",
+      "join_id": "population_to_housing",
+      "compatibility": "full",
+      "join_type": "inner_or_left",
+      "source": "table:population_demographics",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "joins_to",
+      "join_id": "population_to_income",
+      "compatibility": "partial",
+      "join_type": "inner_or_left",
+      "source": "table:population_demographics",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "exact",
+      "valid_for_rollup": true,
+      "source_table": "silver.xwalk_state_region",
+      "source": "geo_level:division",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "exact",
+      "valid_for_rollup": true,
+      "source_table": "silver.xwalk_state_region",
+      "source": "geo_level:state",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "exact",
+      "valid_for_rollup": true,
+      "source_table": "silver.xwalk_state_region",
+      "source": "geo_level:state",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "exact",
+      "valid_for_rollup": true,
+      "source_table": "silver.xwalk_county_state",
+      "source": "geo_level:county",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "exact_subset",
+      "valid_for_rollup": true,
+      "source_table": "silver.xwalk_cbsa_county",
+      "source": "geo_level:county",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "weighted_many_to_many",
+      "valid_for_rollup": false,
+      "source_table": "silver.xwalk_zcta_county",
+      "source": "geo_level:zcta",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "weighted_many_to_many",
+      "valid_for_rollup": false,
+      "source_table": "silver.xwalk_zcta_cbsa",
+      "source": "geo_level:zcta",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "weighted_many_to_many",
+      "valid_for_rollup": false,
+      "source_table": "silver.xwalk_zcta_tract",
+      "source": "geo_level:zcta",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "rolls_up_to",
+      "relationship_type": "exact",
+      "valid_for_rollup": true,
+      "source_table": "silver.xwalk_tract_county",
+      "source": "geo_level:tract",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:housing_core_wide",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "joins_to",
+      "join_id": "housing_to_income",
+      "compatibility": "partial",
+      "join_type": "inner_or_left",
+      "source": "table:housing_core_wide",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_income_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_income_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_income_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:affordability_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:affordability_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:affordability_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:affordability_wide",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:affordability_wide",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:affordability_wide",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:migration_wide",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:transport_built_form_wide",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_gdp_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_gdp_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_gdp_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_labor_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_labor_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_labor_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_industry_wide",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_industry_wide",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "supports_geo_level",
+      "source": "table:economics_industry_wide",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pop_total",
+      "source": "metric:pop_total",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_total",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pop_growth_1yr",
+      "source": "metric:pop_growth_1yr",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_1yr",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pop_growth_3yr",
+      "source": "metric:pop_growth_3yr",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_3yr",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pop_growth_5yr",
+      "source": "metric:pop_growth_5yr",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pop_growth_5yr",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "median_age",
+      "source": "metric:median_age",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_age",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pct_age_under_18",
+      "source": "metric:pct_age_under_18",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_under_18",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pct_age_over_64",
+      "source": "metric:pct_age_over_64",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_age_over_64",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "dependents_per_worker",
+      "source": "metric:dependents_per_worker",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:dependents_per_worker",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pct_hispanic",
+      "source": "metric:pct_hispanic",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_hispanic",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "diversity_index",
+      "source": "metric:diversity_index",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:diversity_index",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pct_ba_plus",
+      "source": "metric:pct_ba_plus",
+      "target": "table:population_demographics",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_ba_plus",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "hu_total",
+      "source": "metric:hu_total",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:hu_total",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "vacancy_rate",
+      "source": "metric:vacancy_rate",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:vacancy_rate",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "owner_occ_rate",
+      "source": "metric:owner_occ_rate",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:owner_occ_rate",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "renter_occ_rate",
+      "source": "metric:renter_occ_rate",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:renter_occ_rate",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "median_gross_rent",
+      "source": "metric:median_gross_rent",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_gross_rent",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "annualized_median_rent",
+      "source": "metric:annualized_median_rent",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:annualized_median_rent",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "median_home_value",
+      "source": "metric:median_home_value",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_home_value",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pct_rent_burden_30plus",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pct_rent_burden_30plus",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "rent_to_income",
+      "source": "metric:rent_to_income",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:rent_to_income",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "value_to_income",
+      "source": "metric:value_to_income",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:us",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:region",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:division",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:zcta",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:value_to_income",
+      "target": "geo_level:tract",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "permits_per_1000_housing_units",
+      "source": "metric:permits_per_1000_housing_units",
+      "target": "table:housing_core_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:permits_per_1000_housing_units",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:permits_per_1000_housing_units",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:permits_per_1000_housing_units",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:permits_per_1000_housing_units",
+      "target": "geo_level:place",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "median_hh_income",
+      "source": "metric:median_hh_income",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_hh_income",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_hh_income",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:median_hh_income",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "acs_income_pc",
+      "source": "metric:acs_income_pc",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:acs_income_pc",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:acs_income_pc",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:acs_income_pc",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pov_rate",
+      "source": "metric:pov_rate",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pov_rate",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pov_rate",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pov_rate",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "gini_index",
+      "source": "metric:gini_index",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:gini_index",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:gini_index",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:gini_index",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pi_total",
+      "source": "metric:pi_total",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pi_total",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pi_total",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pi_total",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "calc_income_pc",
+      "source": "metric:calc_income_pc",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:calc_income_pc",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:calc_income_pc",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:calc_income_pc",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "income_pc_growth_1yr",
+      "source": "metric:income_pc_growth_1yr",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_growth_1yr",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_growth_1yr",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_growth_1yr",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "income_pc_growth_5yr",
+      "source": "metric:income_pc_growth_5yr",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_growth_5yr",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_growth_5yr",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_growth_5yr",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "income_pc_cagr_5yr",
+      "source": "metric:income_pc_cagr_5yr",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_cagr_5yr",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_cagr_5yr",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:income_pc_cagr_5yr",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "from_table",
+      "column": "pi_wage_share",
+      "source": "metric:pi_wage_share",
+      "target": "table:economics_income_wide",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pi_wage_share",
+      "target": "geo_level:state",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pi_wage_share",
+      "target": "geo_level:cbsa",
+      "key": 0
+    },
+    {
+      "relation": "valid_for_geo_level",
+      "source": "metric:pi_wage_share",
+      "target": "geo_level:county",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:ranking",
+      "target": "template:ranking",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:ranking",
+      "target": "template:growth",
+      "key": 0
+    },
+    {
+      "relation": "approved_chart",
+      "source": "question_type:ranking",
+      "target": "chart_type:bar",
+      "key": 0
+    },
+    {
+      "relation": "fallback_chart",
+      "source": "question_type:ranking",
+      "target": "chart_type:heatmap_table",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:trend",
+      "target": "template:trend",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:trend",
+      "target": "template:growth",
+      "key": 0
+    },
+    {
+      "relation": "approved_chart",
+      "source": "question_type:trend",
+      "target": "chart_type:line",
+      "key": 0
+    },
+    {
+      "relation": "fallback_chart",
+      "source": "question_type:trend",
+      "target": "chart_type:slopegraph",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:comparison",
+      "target": "template:compare_selected",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:comparison",
+      "target": "template:growth",
+      "key": 0
+    },
+    {
+      "relation": "approved_chart",
+      "source": "question_type:comparison",
+      "target": "chart_type:bar",
+      "key": 0
+    },
+    {
+      "relation": "approved_chart",
+      "source": "question_type:comparison",
+      "target": "chart_type:slopegraph",
+      "key": 0
+    },
+    {
+      "relation": "fallback_chart",
+      "source": "question_type:comparison",
+      "target": "chart_type:heatmap_table",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:distribution",
+      "target": "template:distribution",
+      "key": 0
+    },
+    {
+      "relation": "approved_chart",
+      "source": "question_type:distribution",
+      "target": "chart_type:boxplot",
+      "key": 0
+    },
+    {
+      "relation": "fallback_chart",
+      "source": "question_type:distribution",
+      "target": "chart_type:heatmap_table",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:benchmark",
+      "target": "template:benchmark",
+      "key": 0
+    },
+    {
+      "relation": "uses_template",
+      "source": "question_type:benchmark",
+      "target": "template:growth",
+      "key": 0
+    },
+    {
+      "relation": "approved_chart",
+      "source": "question_type:benchmark",
+      "target": "chart_type:bar",
+      "key": 0
+    },
+    {
+      "relation": "fallback_chart",
+      "source": "question_type:benchmark",
+      "target": "chart_type:strength_strip",
+      "key": 0
+    },
+    {
+      "relation": "approved_chart",
+      "source": "question_type:correlation",
+      "target": "chart_type:scatter",
+      "key": 0
+    },
+    {
+      "relation": "fallback_chart",
+      "source": "question_type:correlation",
+      "target": "chart_type:hexbin",
+      "key": 0
+    }
+  ]
+}
