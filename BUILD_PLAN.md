@@ -248,21 +248,21 @@ Each entry format:
 
 **Owner:** Agent
 
-- [ ] Build `app/query/generator.py`: reads `query_templates.yml`, takes a structured plan dict, renders parameterized SQL using Jinja2 or f-strings
-- [ ] Build `app/query/validator.py`: checks rendered SQL against semantic layer rules
+- [x] Build `app/query/generator.py`: reads `query_templates.yml`, takes a structured plan dict, renders parameterized SQL using Jinja2 or f-strings
+- [x] Build `app/query/validator.py`: checks rendered SQL against semantic layer rules
   - Tables used are in `table_catalog.yml` and marked `status: active`
   - Fields used exist in the table (cross-reference `data_dictionary/`)
   - Joins used are in `join_catalog.yml`
   - Query is read-only (no INSERT, UPDATE, DROP, etc.)
   - Geo level is in the table's `supported_geo_levels`
-- [ ] Build `app/query/executor.py`: connects to DuckDB (path from env var), executes validated SQL, returns a pandas DataFrame
-- [ ] Build `examples/question_library.yml`: 20–30 example questions with:
+- [x] Build `app/query/executor.py`: connects to DuckDB (path from env var), executes validated SQL, returns a pandas DataFrame
+- [x] Build `examples/question_library.yml`: 20–30 example questions with:
   - natural language question
   - structured query plan (hand-written)
   - expected template type
   - expected SQL pattern
   - expected chart type
-- [ ] Write tests in `tests/test_sql/` that run each example question's hand-written plan through the generator and validator and confirm the SQL is correct
+- [x] Write tests in `tests/test_sql/` that run each example question's hand-written plan through the generator and validator and confirm the SQL is correct
 
 **Success check:** Every example in `question_library.yml` produces valid, executable SQL against the local DuckDB with correct results.
 
@@ -274,14 +274,14 @@ Each entry format:
 
 **Owner:** Agent
 
-- [ ] Build `app/llm/provider.py`: abstract class with `OllamaProvider` and `GroqProvider` implementations, both using the OpenAI-compatible interface. Selected by `LLM_PROVIDER` env var
-- [ ] Build `app/intent/parser.py`: sends a question to the LLM with a system prompt that includes:
+- [x] Build `app/llm/provider.py`: abstract class with `OllamaProvider` and `GroqProvider` implementations, both using the OpenAI-compatible interface. Selected by `LLM_PROVIDER` env var
+- [x] Build `app/intent/parser.py`: sends a question to the LLM with a system prompt that includes:
   - supported tables and metrics from `table_catalog.yml` and `metric_catalog.yml`
   - supported geo levels from `geography_catalog.yml`
   - supported question types
   - 5–8 few-shot examples from `question_library.yml`
   - instruction to return a structured JSON query plan
-- [ ] Define the structured query plan schema (Pydantic model):
+- [x] Define the structured query plan schema (Pydantic model):
   ```python
   class QueryPlan(BaseModel):
       question_type: str        # ranking, trend, compare, distribution, benchmark, growth
@@ -295,11 +295,18 @@ Each entry format:
       sort: str | None
       limit: int | None
   ```
-- [ ] Build clarification logic: if the LLM cannot fill required fields (`metric_id`, `geo_level`, `question_type`), return a targeted clarification question to the user instead of a query plan
-- [ ] Build `app/orchestrator.py`: wires intent parser → query planner → SQL generator → validator → executor in sequence; handles clarification routing
-- [ ] Evaluate intent parser against all 20–30 examples in `question_library.yml`; target 80%+ correct structured plans
+- [x] Build clarification logic: if the LLM cannot fill required fields (`metric_id`, `geo_level`, `question_type`), return a targeted clarification question to the user instead of a query plan
+- [x] Build `app/orchestrator.py`: wires intent parser → query planner → SQL generator → validator → executor in sequence; handles clarification routing
+- [x] Evaluate intent parser against all 20–30 examples in `question_library.yml`; target 80%+ correct structured plans
 
 **Success check:** A natural language question typed in Python produces a correct structured plan, valid SQL, and a result DataFrame — all in one call to `orchestrator.run(question)`.
+
+**Phase 3 implementation summary:**
+
+- Added an OpenAI-compatible LLM provider layer with `OllamaProvider`, `GroqProvider`, and env-based provider selection.
+- Built a structured intent parser with schema validation, prompt construction from the semantic catalogs, few-shot examples from `question_library.yml`, example-library matching, and targeted clarification handling for underspecified questions.
+- Added a deterministic query planner plus end-to-end orchestration that connects parser → planner → SQL generator → validator → DuckDB executor.
+- Added Phase 3 tests covering parser accuracy against the example library, provider-backed parsing, clarification routing, and an end-to-end orchestrator smoke path when `DB_CONNECTION` is configured.
 
 ---
 
@@ -415,3 +422,15 @@ Each entry format:
 | Full pipeline works | 4 | Question → chart output locally |
 | App usable | 5 | Non-technical user can interact without confusion |
 | Deployed | 6 | Shared with small user group on Streamlit Cloud |
+
+## Current Project Status
+
+- [x] Phase 0 complete
+- [x] Phase 1 complete
+- [x] Phase 2 complete
+- [x] Phase 3 complete
+- [ ] Phase 4 pending
+- [ ] Phase 5 pending
+- [ ] Phase 6 pending
+
+Overall status: the project now has a working local natural-language-to-SQL backbone. Semantic grounding, deterministic SQL generation/validation, and Phase 3 orchestration are in place; chart rendering, response assembly, and the frontend remain the next major milestones.
