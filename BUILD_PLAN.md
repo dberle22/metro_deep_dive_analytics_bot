@@ -159,10 +159,10 @@ metro_deep_dive_chatbot/
 
 ### `table_catalog.yml`
 
-- [ ] Add entry for `gold.population_demographics` (schema, grain, geo fields, time field, subject area, description)
-- [ ] Add entry for `gold.housing_core_wide`
-- [ ] Add entry for `gold.economics_income_wide`
-- [ ] Add stub entries for the 6 remaining Gold tables (marked `status: deferred`)
+- [x] Add entry for `gold.population_demographics` (schema, grain, geo fields, time field, subject area, description)
+- [x] Add entry for `gold.housing_core_wide`
+- [x] Add entry for `gold.economics_income_wide`
+- [x] Add stub entries for the 6 remaining Gold tables (marked `status: deferred`)
 
 Each entry format:
 ```yaml
@@ -182,10 +182,10 @@ Each entry format:
 
 ### `metric_catalog.yml`
 
-- [ ] Define 8–12 metrics from `population_demographics` (e.g. `total_population`, `pop_growth_5yr`, `median_age`, `pct_foreign_born`)
-- [ ] Define 8–12 metrics from `housing_core_wide` (e.g. `median_home_value`, `median_gross_rent`, `owner_occupancy_rate`)
-- [ ] Define 8–12 metrics from `economics_income_wide` (e.g. `median_household_income`, `per_capita_income`, `income_growth_5yr`)
-- [ ] Mark each metric with `growth_eligible: true/false` and supported growth windows
+- [x] Define 8–12 metrics from `population_demographics` (e.g. `total_population`, `pop_growth_5yr`, `median_age`, `pct_foreign_born`)
+- [x] Define 8–12 metrics from `housing_core_wide` (e.g. `median_home_value`, `median_gross_rent`, `owner_occupancy_rate`)
+- [x] Define 8–12 metrics from `economics_income_wide` (e.g. `median_household_income`, `per_capita_income`, `income_growth_5yr`)
+- [x] Mark each metric with `growth_eligible: true/false` and supported growth windows
 
 Each entry format:
 ```yaml
@@ -205,30 +205,38 @@ Each entry format:
 
 ### `geography_catalog.yml`
 
-- [ ] Define all supported geo levels with canonical names and `geo_level` values used in DuckDB
-- [ ] Define parent-child hierarchy (county → cbsa, county → state, state → division, state → region)
-- [ ] Note which rollup paths are valid vs. invalid (e.g. ZCTA does not roll up cleanly to CBSA)
+- [x] Define all supported geo levels with canonical names and `geo_level` values used in DuckDB
+- [x] Define parent-child hierarchy (county → cbsa, county → state, state → division, state → region)
+- [x] Note which rollup paths are valid vs. invalid (e.g. ZCTA does not roll up cleanly to CBSA)
 
 ### `join_catalog.yml`
 
-- [ ] Define approved join paths between the 3 active tables (via `geo_id` + `geo_level` + `year`)
-- [ ] Note grain compatibility rules (same grain required for most joins)
-- [ ] Note any known join caveats in the Gold layer
+- [x] Define approved join paths between the 3 active tables (via `geo_id` + `geo_level` + `year`)
+- [x] Note grain compatibility rules (same grain required for most joins)
+- [x] Note any known join caveats in the Gold layer
 
 ### `chart_rules.yml`
 
-- [ ] Map each question type + result shape to 1–2 approved chart types
-- [ ] Start with: ranking → bar; trend → line; comparison → bar or slopegraph; distribution → boxplot or histogram; benchmark → bar with reference line; correlation → scatter
+- [x] Map each question type + result shape to 1–2 approved chart types
+- [x] Start with: ranking → bar; trend → line; comparison → bar or slopegraph; distribution → boxplot or histogram; benchmark → bar with reference line; correlation → scatter
 
 ### `query_templates.yml`
 
-- [ ] Define 6 named SQL template patterns:
+- [x] Define 6 named SQL template patterns:
   - `ranking`: top/bottom N by metric, optional geo filter
   - `trend`: metric over time for one or more geographies
   - `compare_selected`: metric across a user-specified list of geographies
   - `distribution`: spread of a metric across all geos at a grain
   - `benchmark`: target geo vs. benchmark (US, region, state, peers)
   - `growth`: point-in-time growth rate over N years via LAG or CTE
+
+### Semantic Graph & Visualization
+
+- [x] Add a shared Python semantic graph builder that loads all Phase 1 YAML catalogs into a graph model
+- [x] Add Mermaid diagram export for human-readable semantic layer visualization
+- [x] Add a CLI workflow to regenerate graph artifacts from the YAML source of truth
+- [x] Add tests for graph construction and Mermaid generation
+- [x] Document how to visualize and explore the semantic layer
 
 **Human review checkpoint:** Before Phase 2, review all YAML files for accuracy against the actual DuckDB schema. Run sample queries manually to confirm field names and grain.
 

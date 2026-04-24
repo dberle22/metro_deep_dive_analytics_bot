@@ -1,2 +1,419 @@
-# Phase 0 placeholder.
-# Phase 1 will populate the semantic layer catalogs.
+version: 1
+catalog_name: metric_catalog
+description: Approved metrics exposed to the planner and SQL generator for Phase 1.
+metrics:
+  - metric_id: pop_total
+    display_name: Total Population
+    description: Total resident population for the geography and year.
+    source_table: population_demographics
+    source_column: pop_total
+    unit_format: integer
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: true
+    growth_windows: [1, 3, 5, 10]
+    caveats: ACS-derived population estimates; very small geographies may have noisy year-to-year change.
+    status: active
+
+  - metric_id: pop_growth_1yr
+    display_name: Population Growth (1 Year)
+    description: One-year percentage change in total population.
+    source_table: population_demographics
+    source_column: pop_growth_1yr
+    unit_format: percent
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Null in the first year of each geography series.
+    status: active
+
+  - metric_id: pop_growth_3yr
+    display_name: Population Growth (3 Year)
+    description: Three-year percentage change in total population.
+    source_table: population_demographics
+    source_column: pop_growth_3yr
+    unit_format: percent
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Null until a geography has at least three prior years of history.
+    status: active
+
+  - metric_id: pop_growth_5yr
+    display_name: Population Growth (5 Year)
+    description: Five-year percentage change in total population.
+    source_table: population_demographics
+    source_column: pop_growth_5yr
+    unit_format: percent
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Good default growth metric for ranking and benchmark questions.
+    status: active
+
+  - metric_id: median_age
+    display_name: Median Age
+    description: Median age of the resident population.
+    source_table: population_demographics
+    source_column: median_age
+    unit_format: number_1dp
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Small-area estimates may be volatile and can be missing in sparse geographies.
+    status: active
+
+  - metric_id: pct_age_under_18
+    display_name: Share Under 18
+    description: Share of population younger than 18.
+    source_table: population_demographics
+    source_column: pct_age_under_18
+    unit_format: percent
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Division by zero can yield invalid values in extremely small geographies upstream.
+    status: active
+
+  - metric_id: pct_age_over_64
+    display_name: Share Age 65+
+    description: Share of population age 65 and older.
+    source_table: population_demographics
+    source_column: pct_age_over_64
+    unit_format: percent
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Division by zero can yield invalid values in extremely small geographies upstream.
+    status: active
+
+  - metric_id: dependents_per_worker
+    display_name: Dependents Per Worker
+    description: Ratio of young and older dependents to the core working-age population.
+    source_table: population_demographics
+    source_column: dependents_per_worker
+    unit_format: ratio
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Can produce infinite or undefined values where the worker denominator is near zero.
+    status: active
+
+  - metric_id: pct_hispanic
+    display_name: Hispanic Share
+    description: Share of population identifying as Hispanic or Latino.
+    source_table: population_demographics
+    source_column: pct_hispanic
+    unit_format: percent
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Based on ACS race/ethnicity composition fields.
+    status: active
+
+  - metric_id: diversity_index
+    display_name: Diversity Index
+    description: Diversity index derived from race/ethnicity shares, where higher values indicate more diversity.
+    source_table: population_demographics
+    source_column: diversity_index
+    unit_format: index
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Not intuitive as a percentage; should usually be paired with a definition in the UI.
+    status: active
+
+  - metric_id: pct_ba_plus
+    display_name: Share With Bachelor's Degree Or Higher
+    description: Share of population age 25+ with a bachelor's degree or higher.
+    source_table: population_demographics
+    source_column: pct_ba_plus
+    unit_format: percent
+    subject_area: population
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Education composition fields are ACS-based and can be noisy for small areas.
+    status: active
+
+  - metric_id: hu_total
+    display_name: Total Housing Units
+    description: Total housing units for the geography and year.
+    source_table: housing_core_wide
+    source_column: hu_total
+    unit_format: integer
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: true
+    growth_windows: [1, 3, 5]
+    caveats: Growth must be computed in SQL at query time because the Gold table stores levels only.
+    status: active
+
+  - metric_id: vacancy_rate
+    display_name: Vacancy Rate
+    description: Share of housing units that are vacant.
+    source_table: housing_core_wide
+    source_column: vacancy_rate
+    unit_format: percent
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Best interpreted alongside occupancy rate and total stock.
+    status: active
+
+  - metric_id: owner_occ_rate
+    display_name: Owner Occupancy Rate
+    description: Share of occupied housing units that are owner occupied.
+    source_table: housing_core_wide
+    source_column: owner_occ_rate
+    unit_format: percent
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Complementary to renter occupancy rate.
+    status: active
+
+  - metric_id: renter_occ_rate
+    display_name: Renter Occupancy Rate
+    description: Share of occupied housing units that are renter occupied.
+    source_table: housing_core_wide
+    source_column: renter_occ_rate
+    unit_format: percent
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Complementary to owner occupancy rate.
+    status: active
+
+  - metric_id: median_gross_rent
+    display_name: Median Gross Rent
+    description: Median gross monthly rent.
+    source_table: housing_core_wide
+    source_column: median_gross_rent
+    unit_format: currency
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: true
+    growth_windows: [1, 3, 5]
+    caveats: Nominal values are not inflation adjusted.
+    status: active
+
+  - metric_id: annualized_median_rent
+    display_name: Annualized Median Rent
+    description: Median gross monthly rent multiplied by 12.
+    source_table: housing_core_wide
+    source_column: annualized_median_rent
+    unit_format: currency
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: true
+    growth_windows: [1, 3, 5]
+    caveats: Derived directly from the monthly median gross rent field.
+    status: active
+
+  - metric_id: median_home_value
+    display_name: Median Home Value
+    description: Median owner-occupied home value.
+    source_table: housing_core_wide
+    source_column: median_home_value
+    unit_format: currency
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: true
+    growth_windows: [1, 3, 5]
+    caveats: Nominal values are not inflation adjusted.
+    status: active
+
+  - metric_id: pct_rent_burden_30plus
+    display_name: Share Rent Burdened 30%+
+    description: Share of renter households spending at least 30% of income on rent.
+    source_table: housing_core_wide
+    source_column: pct_rent_burden_30plus
+    unit_format: percent
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Interpretation should note the ACS burden threshold convention.
+    status: active
+
+  - metric_id: rent_to_income
+    display_name: Rent To Income Ratio
+    description: Annualized median rent divided by median household income.
+    source_table: housing_core_wide
+    source_column: rent_to_income
+    unit_format: ratio
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Null where rent or income is missing; useful as an affordability indicator rather than a formal burden rate.
+    status: active
+
+  - metric_id: value_to_income
+    display_name: Home Value To Income Ratio
+    description: Median home value divided by median household income.
+    source_table: housing_core_wide
+    source_column: value_to_income
+    unit_format: ratio
+    subject_area: housing
+    valid_geo_levels: [us, region, division, state, cbsa, county, place, zcta, tract]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Null where home value or income is missing.
+    status: active
+
+  - metric_id: permits_per_1000_housing_units
+    display_name: Permits Per 1,000 Housing Units
+    description: Total permitted housing units per 1,000 existing housing units.
+    source_table: housing_core_wide
+    source_column: permits_per_1000_housing_units
+    unit_format: rate_per_1000
+    subject_area: housing
+    valid_geo_levels: [state, cbsa, county, place]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Sparse because BPS coverage is partial in the current snapshot.
+    status: active
+
+  - metric_id: median_hh_income
+    display_name: Median Household Income
+    description: ACS median household income in the past 12 months.
+    source_table: economics_income_wide
+    source_column: median_hh_income
+    unit_format: currency
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: true
+    growth_windows: [1, 5, 10]
+    caveats: Nominal ACS income measure, distinct from BEA personal income fields.
+    status: active
+
+  - metric_id: acs_income_pc
+    display_name: ACS Per Capita Income
+    description: ACS per capita income for the geography and year.
+    source_table: economics_income_wide
+    source_column: acs_income_pc
+    unit_format: currency
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: true
+    growth_windows: [1, 5, 10]
+    caveats: ACS-derived and may differ from BEA per-capita income concepts.
+    status: active
+
+  - metric_id: pov_rate
+    display_name: Poverty Rate
+    description: Share of the population below the poverty threshold.
+    source_table: economics_income_wide
+    source_column: pov_rate
+    unit_format: percent
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: false
+    growth_windows: []
+    caveats: ACS poverty estimates can be noisy for smaller counties.
+    status: active
+
+  - metric_id: gini_index
+    display_name: Gini Index
+    description: Income inequality index where higher values indicate greater inequality.
+    source_table: economics_income_wide
+    source_column: gini_index
+    unit_format: index
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Best paired with explanation because the scale is not percentage-based.
+    status: active
+
+  - metric_id: pi_total
+    display_name: Total Personal Income
+    description: BEA total personal income in current dollars.
+    source_table: economics_income_wide
+    source_column: pi_total
+    unit_format: currency
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: true
+    growth_windows: [1, 5, 10]
+    caveats: Null where BEA personal income data is unavailable upstream.
+    status: active
+
+  - metric_id: calc_income_pc
+    display_name: BEA Per Capita Personal Income
+    description: BEA total personal income divided by total population.
+    source_table: economics_income_wide
+    source_column: calc_income_pc
+    unit_format: currency
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: true
+    growth_windows: [1, 5, 10]
+    caveats: Derived from BEA personal income and ACS population rather than the raw BEA per-capita field.
+    status: active
+
+  - metric_id: income_pc_growth_1yr
+    display_name: Per Capita Income Growth (1 Year)
+    description: One-year percentage change in BEA-derived per capita personal income.
+    source_table: economics_income_wide
+    source_column: income_pc_growth_1yr
+    unit_format: percent
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Null in the first available year for each geography.
+    status: active
+
+  - metric_id: income_pc_growth_5yr
+    display_name: Per Capita Income Growth (5 Year)
+    description: Five-year percentage change in BEA-derived per capita personal income.
+    source_table: economics_income_wide
+    source_column: income_pc_growth_5yr
+    unit_format: percent
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Useful default growth metric for income ranking and benchmark questions.
+    status: active
+
+  - metric_id: income_pc_cagr_5yr
+    display_name: Per Capita Income CAGR (5 Year)
+    description: Five-year compound annual growth rate for BEA-derived per capita personal income.
+    source_table: economics_income_wide
+    source_column: income_pc_cagr_5yr
+    unit_format: percent
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Prefer when the user asks for annualized growth rather than cumulative growth.
+    status: active
+
+  - metric_id: pi_wage_share
+    display_name: Wage Share Of Personal Income
+    description: Share of total personal income attributable to wages and salaries.
+    source_table: economics_income_wide
+    source_column: pi_wage_share
+    unit_format: percent
+    subject_area: income
+    valid_geo_levels: [state, cbsa, county]
+    growth_eligible: false
+    growth_windows: []
+    caveats: Can exceed expected bounds in anomalous upstream rows and should be quality-checked in Phase 2.
+    status: active
