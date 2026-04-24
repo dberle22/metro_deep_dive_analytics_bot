@@ -248,21 +248,21 @@ Each entry format:
 
 **Owner:** Agent
 
-- [ ] Build `app/query/generator.py`: reads `query_templates.yml`, takes a structured plan dict, renders parameterized SQL using Jinja2 or f-strings
-- [ ] Build `app/query/validator.py`: checks rendered SQL against semantic layer rules
+- [x] Build `app/query/generator.py`: reads `query_templates.yml`, takes a structured plan dict, renders parameterized SQL using Jinja2 or f-strings
+- [x] Build `app/query/validator.py`: checks rendered SQL against semantic layer rules
   - Tables used are in `table_catalog.yml` and marked `status: active`
   - Fields used exist in the table (cross-reference `data_dictionary/`)
   - Joins used are in `join_catalog.yml`
   - Query is read-only (no INSERT, UPDATE, DROP, etc.)
   - Geo level is in the table's `supported_geo_levels`
-- [ ] Build `app/query/executor.py`: connects to DuckDB (path from env var), executes validated SQL, returns a pandas DataFrame
-- [ ] Build `examples/question_library.yml`: 20–30 example questions with:
+- [x] Build `app/query/executor.py`: connects to DuckDB (path from env var), executes validated SQL, returns a pandas DataFrame
+- [x] Build `examples/question_library.yml`: 20–30 example questions with:
   - natural language question
   - structured query plan (hand-written)
   - expected template type
   - expected SQL pattern
   - expected chart type
-- [ ] Write tests in `tests/test_sql/` that run each example question's hand-written plan through the generator and validator and confirm the SQL is correct
+- [x] Write tests in `tests/test_sql/` that run each example question's hand-written plan through the generator and validator and confirm the SQL is correct
 
 **Success check:** Every example in `question_library.yml` produces valid, executable SQL against the local DuckDB with correct results.
 
