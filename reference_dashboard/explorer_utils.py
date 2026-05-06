@@ -26,6 +26,7 @@ SUBJECT_AREA_TABLES = {
     "housing": "gold.housing_core_wide",
     "income": "gold.economics_income_wide",
 }
+DEFAULT_RUNTIME_DB = Path(__file__).resolve().parent.parent / "data" / "duckdb" / "metro_deep_dive_runtime.duckdb"
 
 VALID_GEO_LEVELS = {"state", "region", "division", "county", "cbsa"}
 
@@ -147,11 +148,9 @@ def _project_root() -> Path:
 
 
 def get_connection() -> duckdb.DuckDBPyConnection:
-    """Return a read-only DuckDB connection using DB_CONNECTION from .env."""
+    """Return a read-only DuckDB connection using DB_CONNECTION or the repo runtime DB."""
     _load_project_env()
-    db_connection = os.getenv("DB_CONNECTION")
-    if not db_connection:
-        raise ValueError("DB_CONNECTION is not configured")
+    db_connection = os.getenv("DB_CONNECTION") or str(DEFAULT_RUNTIME_DB)
 
     path = Path(db_connection)
     if not path.exists():

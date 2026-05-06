@@ -21,13 +21,12 @@ except ImportError:
 from app.query.catalogs import REPO_ROOT
 
 VIEW_SQL_PATH = REPO_ROOT / "etl" / "gold" / "benchmark_reference_view.sql"
+DEFAULT_RUNTIME_DB = REPO_ROOT / "data" / "duckdb" / "metro_deep_dive_runtime.duckdb"
 
 
 def create_view(db_path: str | None = None) -> None:
     load_dotenv()
-    resolved = db_path or os.getenv("DB_CONNECTION")
-    if not resolved:
-        raise ValueError("DB_CONNECTION is not configured")
+    resolved = db_path or os.getenv("DB_CONNECTION") or str(DEFAULT_RUNTIME_DB)
 
     path = Path(resolved)
     if not path.exists():

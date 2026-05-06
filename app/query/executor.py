@@ -21,16 +21,17 @@ except ImportError:  # pragma: no cover - optional dependency in bare environmen
 
 from app.query.generator import RenderedQuery
 
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_RUNTIME_DB = REPO_ROOT / "data" / "duckdb" / "metro_deep_dive_runtime.duckdb"
+
 
 class QueryExecutor:
     """Execute validated read-only SQL against DuckDB."""
 
     def __init__(self, db_connection: str | None = None, read_only: bool = True) -> None:
         load_dotenv()
-        self.db_connection = db_connection or os.getenv("DB_CONNECTION")
+        self.db_connection = db_connection or os.getenv("DB_CONNECTION") or str(DEFAULT_RUNTIME_DB)
         self.read_only = read_only
-        if not self.db_connection:
-            raise ValueError("DB_CONNECTION is not configured")
 
     def execute(self, query: str | RenderedQuery) -> pd.DataFrame:
         if pd is None:
