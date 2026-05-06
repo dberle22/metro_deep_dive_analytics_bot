@@ -17,9 +17,6 @@ METRIC_CATALOG_PATH = REPO_ROOT / "semantic_layer" / "metric_catalog.yml"
 
 
 SUPPORT_TABLES: dict[str, list[str]] = {
-    "geo.states": ["state_fips", "state_name", "geom"],
-    "geo.counties": ["county_geoid", "county_name", "state_fips", "geom"],
-    "geo.cbsas": ["cbsa_code", "cbsa_name", "geom"],
     "silver.xwalk_cbsa_state": ["cbsa_code", "state_fips"],
     "silver.xwalk_state_region": ["state_fips", "census_region", "census_division"],
 }
@@ -90,6 +87,7 @@ def build_runtime_duckdb(source: Path, target: Path) -> None:
     con = duckdb.connect(str(target), read_only=False)
     try:
         con.execute(f"ATTACH '{source}' AS source_db (READ_ONLY)")
+        con.execute("LOAD spatial")
 
         for schema in ("gold", "geo", "silver"):
             con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
@@ -121,6 +119,79 @@ def build_runtime_duckdb(source: Path, target: Path) -> None:
                 FROM source_db.{fq_table}
                 """
             )
+
+        con.execute(
+            """
+            CREATE TABLE geo.states AS
+            SELECT
+              state_fips,
+              state_name,
+              ST_AsGeoJSON(geom) AS geojson_str
+            FROM source_db.geo.states
+            """
+        )
+        con.execute(
+            """
+            CREATE TABLE geo.counties AS
+            SELECT
+              county_geoid,
+              county_name,
+              state_fips,
+              ST_AsGeoJSON(geom) AS geojson_str
+            FROM source_db.geo.counties
+            """
+        )
+        con.execute(
+            """
+            CREATE TABLE geo.cbsas AS
+            SELECT
+              cbsa_code,
+              cbsa_name,
+              ST_AsGeoJSON(geom) AS geojson_str
+            FROM source_db.geo.cbsas
+            """
+        )
+        con.execute(
+            """
+            CREATE TABLE geo.regions AS
+            SELECT
+              CASE
+                WHEN x.census_region = 'Northeast' THEN '1'
+                WHEN x.census_region = 'Midwest' THEN '2'
+                WHEN x.census_region = 'South' THEN '3'
+                WHEN x.census_region = 'West' THEN '4'
+              END AS geo_id,
+              x.census_region AS geo_name,
+              ST_AsGeoJSON(ST_Union_Agg(s.geom)) AS geojson_str
+            FROM source_db.geo.states s
+            INNER JOIN source_db.silver.xwalk_state_region x
+              ON s.state_fips = x.state_fips
+            GROUP BY 1, 2
+            """
+        )
+        con.execute(
+            """
+            CREATE TABLE geo.divisions AS
+            SELECT
+              CASE
+                WHEN x.census_division = 'New England' THEN '1'
+                WHEN x.census_division = 'Middle Atlantic' THEN '2'
+                WHEN x.census_division = 'East North Central' THEN '3'
+                WHEN x.census_division = 'West North Central' THEN '4'
+                WHEN x.census_division = 'South Atlantic' THEN '5'
+                WHEN x.census_division = 'East South Central' THEN '6'
+                WHEN x.census_division = 'West South Central' THEN '7'
+                WHEN x.census_division = 'Mountain' THEN '8'
+                WHEN x.census_division = 'Pacific' THEN '9'
+              END AS geo_id,
+              x.census_division AS geo_name,
+              ST_AsGeoJSON(ST_Union_Agg(s.geom)) AS geojson_str
+            FROM source_db.geo.states s
+            INNER JOIN source_db.silver.xwalk_state_region x
+              ON s.state_fips = x.state_fips
+            GROUP BY 1, 2
+            """
+        )
 
         con.execute("CHECKPOINT")
     finally:

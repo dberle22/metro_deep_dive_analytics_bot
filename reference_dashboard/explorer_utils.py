@@ -259,6 +259,15 @@ def build_geojson(geo_level: str, state_filter: list[str] | None = None) -> dict
             SELECT
                 state_fips AS geo_id,
                 state_name AS geo_name,
+                geojson_str
+            FROM geo.states
+            WHERE state_fips IN ({filtered_states_sql})
+            ORDER BY state_fips
+        """
+        fallback_sql = f"""
+            SELECT
+                state_fips AS geo_id,
+                state_name AS geo_name,
                 ST_AsGeoJSON(geom) AS geojson_str
             FROM geo.states
             WHERE state_fips IN ({filtered_states_sql})
@@ -266,6 +275,15 @@ def build_geojson(geo_level: str, state_filter: list[str] | None = None) -> dict
         """
     elif normalized_geo_level == "county":
         sql = f"""
+            SELECT
+                county_geoid AS geo_id,
+                county_name AS geo_name,
+                geojson_str
+            FROM geo.counties
+            WHERE state_fips IN ({filtered_states_sql})
+            ORDER BY county_geoid
+        """
+        fallback_sql = f"""
             SELECT
                 county_geoid AS geo_id,
                 county_name AS geo_name,
@@ -279,6 +297,17 @@ def build_geojson(geo_level: str, state_filter: list[str] | None = None) -> dict
             SELECT DISTINCT
                 c.cbsa_code AS geo_id,
                 c.cbsa_name AS geo_name,
+                c.geojson_str
+            FROM geo.cbsas c
+            INNER JOIN silver.xwalk_cbsa_state x
+                ON c.cbsa_code = x.cbsa_code
+            WHERE x.state_fips IN ({filtered_states_sql})
+            ORDER BY c.cbsa_code
+        """
+        fallback_sql = f"""
+            SELECT DISTINCT
+                c.cbsa_code AS geo_id,
+                c.cbsa_name AS geo_name,
                 ST_AsGeoJSON(c.geom) AS geojson_str
             FROM geo.cbsas c
             INNER JOIN silver.xwalk_cbsa_state x
@@ -288,6 +317,14 @@ def build_geojson(geo_level: str, state_filter: list[str] | None = None) -> dict
         """
     elif normalized_geo_level == "region":
         sql = f"""
+            SELECT
+                geo_id,
+                geo_name,
+                geojson_str
+            FROM geo.regions
+            ORDER BY 1
+        """
+        fallback_sql = f"""
             SELECT
                 {_region_case_expression('x.census_region')} AS geo_id,
                 x.census_region AS geo_name,
@@ -302,6 +339,14 @@ def build_geojson(geo_level: str, state_filter: list[str] | None = None) -> dict
     else:
         sql = f"""
             SELECT
+                geo_id,
+                geo_name,
+                geojson_str
+            FROM geo.divisions
+            ORDER BY 1
+        """
+        fallback_sql = f"""
+            SELECT
                 {_division_case_expression('x.census_division')} AS geo_id,
                 x.census_division AS geo_name,
                 ST_AsGeoJSON(ST_Union_Agg(s.geom)) AS geojson_str
@@ -315,8 +360,11 @@ def build_geojson(geo_level: str, state_filter: list[str] | None = None) -> dict
 
     connection = get_connection()
     try:
-        _load_spatial_extension(connection)
-        rows = connection.execute(sql).fetchall()
+        try:
+            rows = connection.execute(sql).fetchall()
+        except duckdb.Error:
+            _load_spatial_extension(connection)
+            rows = connection.execute(fallback_sql).fetchall()
     finally:
         connection.close()
 
