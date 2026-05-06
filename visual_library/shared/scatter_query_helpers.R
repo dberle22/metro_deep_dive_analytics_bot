@@ -6,6 +6,20 @@ get_env_path <- function(key) {
   path.expand(val)
 }
 
+resolve_duckdb_path <- function() {
+  db_connection <- get_env_path("DB_CONNECTION")
+  if (!is.na(db_connection)) {
+    return(db_connection)
+  }
+
+  data_root <- get_env_path("DATA")
+  if (is.na(data_root)) {
+    stop("Either DB_CONNECTION or DATA must be set.")
+  }
+
+  file.path(data_root, "duckdb", "metro_deep_dive.duckdb")
+}
+
 read_sql_file <- function(path) {
   if (!file.exists(path)) {
     stop(paste("SQL file not found:", path))
@@ -18,13 +32,31 @@ connect_metro_duckdb <- function(read_only = TRUE) {
     stop("Packages DBI and duckdb are required.")
   }
 
-  data_root <- get_env_path("DATA")
-  if (is.na(data_root)) stop("DATA environment variable is not set.")
-
-  db_path <- file.path(data_root, "duckdb", "metro_deep_dive.duckdb")
+  db_path <- resolve_duckdb_path()
   if (!file.exists(db_path)) stop(paste("DuckDB not found:", db_path))
 
-  DBI::dbConnect(duckdb::duckdb(), dbdir = db_path, read_only = read_only)
+  con <- DBI::dbConnect(duckdb::duckdb(), dbdir = db_path, read_only = read_only)
+
+  # Attach the same database under the legacy catalog name so older sample SQL
+  # that still references metro_deep_dive.gold.* continues to work.
+  tryCatch(
+    DBI::dbExecute(
+      con,
+      paste0(
+        "ATTACH '",
+        gsub("'", "''", db_path, fixed = TRUE),
+        "' AS metro_deep_dive (READ_ONLY)"
+      )
+    ),
+    error = function(err) {
+      if (!grepl("already exists", conditionMessage(err), fixed = TRUE)) {
+        stop(err)
+      }
+      invisible(NULL)
+    }
+  )
+
+  con
 }
 
 run_scatter_query <- function(con, sql_path) {

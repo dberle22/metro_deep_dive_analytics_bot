@@ -41,7 +41,7 @@
 - The SQL currently stabilizes `silver.hud_*` and `silver.bps_wide` duplicates with grouped rollups before joining.
 
 ## Lineage
-1. **Primary build script**: [scripts/etl/gold/gold_housing_core.sql](/Users/danberle/Documents/projects/metro_deep_dive/scripts/etl/gold/gold_housing_core.sql)
+1. **Primary build script**: [scripts/etl/gold/gold_housing_core.sql]
 2. **Primary upstreams**:
    - `silver.housing_kpi`
    - `silver.income_kpi`

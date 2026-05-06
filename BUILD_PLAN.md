@@ -316,26 +316,53 @@ Each entry format:
 
 **Owner:** Agent
 
-- [ ] Build `app/charts/profiler.py`: inspects a result DataFrame and returns a result profile dict:
+- [x] Build `app/charts/profiler.py`: inspects a result DataFrame and returns a result profile dict:
   - `row_count`
   - `has_time_series` (bool)
   - `has_geo_column` (bool)
   - `dimension_count`
   - `measure_count`
   - `inferred_shape` (ranking, trend, distribution, comparison, benchmark)
-- [ ] Build `app/charts/selector.py`: takes `question_type` from the query plan + `inferred_shape` from the profiler, looks up `chart_rules.yml`, returns the best approved chart type
-- [ ] Build `app/charts/renderer.py`: subprocess bridge
+- [x] Build `app/charts/selector.py`: takes `question_type` from the query plan + `inferred_shape` from the profiler, looks up `chart_rules.yml`, returns the best approved chart type
+- [x] Build `app/charts/renderer.py`: subprocess bridge
   - Writes result DataFrame to a temp CSV
   - Writes chart config (type, x, y, group, title) to a temp JSON
   - Calls the appropriate R script: `Rscript visual_library/shared/render/render_{chart_type}.R --config /tmp/chart_config.json --data /tmp/chart_data.csv --output /tmp/chart_out.png`
   - Returns the path to the rendered PNG
-- [ ] Confirm each active R render script accepts `--config`, `--data`, `--output` CLI args (adapt scripts if needed — this is human-reviewable work)
-- [ ] Wire chart selection + rendering into `orchestrator.py`
+- [x] Confirm each active R render script accepts `--config`, `--data`, `--output` CLI args (adapt scripts if needed — this is human-reviewable work)
+- [x] Wire chart selection + rendering into `orchestrator.py`
 
 **R script CLI interface (human task):**
-- [ ] Review the 6 MVP chart render scripts (`render_bar.R`, `render_line.R`, `render_scatter.R`, `render_boxplot.R`, `render_heatmap_table.R`, `render_slopegraph.R`) and confirm or add CLI argument handling so they can be called from subprocess
+- [x] Review the 6 MVP chart render scripts (`render_bar.R`, `render_line.R`, `render_scatter.R`, `render_boxplot.R`, `render_heatmap_table.R`, `render_slopegraph.R`) and confirm or add CLI argument handling so they can be called from subprocess
 
 **Success check:** `orchestrator.run("Which states had the highest population growth over 5 years?")` returns a written answer, a PNG path, a DataFrame, and SQL.
+
+**Phase 4 implementation summary:**
+
+- Added result profiling and deterministic chart selection so query outputs map to approved chart types from the semantic chart rules.
+- Built a subprocess-based chart renderer that writes temp CSV/JSON artifacts, invokes the shared R renderers, and returns a rendered PNG path plus chart metadata.
+- Standardized CLI entrypoints for the six MVP R renderers with a shared helper that accepts `--config`, `--data`, and `--output`.
+- Wired chart profiling, selection, rendering, and lightweight response assembly into `app/orchestrator.py` so end-to-end runs now produce SQL, data, chart metadata, PNG output, and a concise written summary.
+
+---
+
+## Phase 4.5 — Pipeline Hardening & Output Inspection
+
+**Goal:** Make the end-to-end pipeline reliable and outputs persistable before building the frontend on top of it. Catch errors visibly, fix known provider quirks, and create a local inspection workflow for manual review and model tuning.
+
+**Owner:** Agent + Human
+
+- [x] Fix silent provider failure in `app/intent/parser.py`: log the exception before setting `provider_result = None` so errors surface instead of producing a silent clarification response
+- [x] Drop `response_format={"type": "json_object"}` from `app/llm/provider.py`: rely on the system prompt instruction instead — this makes the Ollama path viable and removes a parameter Ollama does not handle cleanly
+- [x] Add `--output-dir` flag to `app/scripts/ask.py`: when provided, saves the following to the named directory inside the repo so runs can be manually inspected and used for model tuning:
+  - `chart.png` — the rendered chart
+  - `query_plan.json` — the structured plan returned by the parser
+  - `result.sql` — the generated SQL
+  - `result.csv` — the raw query result
+  - `answer.txt` — the written response text
+- [ ] Run 5–10 questions across all supported question types (ranking, trend, distribution, benchmark, growth) end-to-end with `--render-chart` to confirm the full pipeline is stable before Phase 5
+
+**Success check:** `ask.py --output-dir runs/my_test` produces a named folder with all five artifacts. Running 5+ question types produces correct charts and answers with no silent failures.
 
 ---
 
@@ -429,7 +456,7 @@ Each entry format:
 - [x] Phase 1 complete
 - [x] Phase 2 complete
 - [x] Phase 3 complete
-- [ ] Phase 4 pending
+- [x] Phase 4 complete
 - [ ] Phase 5 pending
 - [ ] Phase 6 pending
 

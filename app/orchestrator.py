@@ -1,4 +1,4 @@
-"""End-to-end orchestration for the Phase 3 text-to-SQL pipeline."""
+"""End-to-end orchestration for the Phase 4 question-to-chart pipeline."""
 
 from __future__ import annotations
 
@@ -10,17 +10,21 @@ try:
 except ImportError:  # pragma: no cover - optional dependency in bare environments
     pd = None
 
+from app.charts.profiler import ResultProfile, ResultProfiler
+from app.charts.renderer import ChartRenderer, RenderedChart
+from app.charts.selector import ChartSelection, ChartSelector
 from app.intent.parser import ClarificationRequest, IntentParser, ParseResult, QueryPlan
 from app.llm.provider import LLMProvider, get_llm_provider
 from app.query.executor import QueryExecutor
 from app.query.generator import QueryGenerator, RenderedQuery
 from app.query.planner import PlannedQuery, QueryPlanner
 from app.query.validator import QueryValidator, ValidationResult
+from app.response.assembler import AssembledResponse, ResponseAssembler
 
 
 @dataclass
 class OrchestrationResult:
-    """Full Phase 3 pipeline output for one user question."""
+    """Full Phase 4 pipeline output for one user question."""
 
     question: str
     parse_result: ParseResult
@@ -29,6 +33,10 @@ class OrchestrationResult:
     rendered_query: RenderedQuery | None = None
     validation: ValidationResult | None = None
     dataframe: pd.DataFrame | None = None
+    result_profile: ResultProfile | None = None
+    chart_selection: ChartSelection | None = None
+    rendered_chart: RenderedChart | None = None
+    response: AssembledResponse | None = None
 
     @property
     def clarification(self) -> ClarificationRequest | None:
@@ -42,9 +50,17 @@ class OrchestrationResult:
     def sql(self) -> str | None:
         return None if self.rendered_query is None else self.rendered_query.sql
 
+    @property
+    def chart_path(self) -> str | None:
+        return None if self.rendered_chart is None else self.rendered_chart.output_path
+
+    @property
+    def answer_text(self) -> str | None:
+        return None if self.response is None else self.response.answer_text
+
 
 class Orchestrator:
-    """Wire intent parsing through execution with validation in the middle."""
+    """Wire intent parsing through validated SQL execution and chart rendering."""
 
     def __init__(
         self,
@@ -54,6 +70,10 @@ class Orchestrator:
         generator: QueryGenerator | None = None,
         validator: QueryValidator | None = None,
         executor: QueryExecutor | None = None,
+        profiler: ResultProfiler | None = None,
+        selector: ChartSelector | None = None,
+        renderer: ChartRenderer | None = None,
+        assembler: ResponseAssembler | None = None,
         provider: LLMProvider | None = None,
     ) -> None:
         self.parser = parser or IntentParser(provider=provider)
@@ -61,6 +81,10 @@ class Orchestrator:
         self.generator = generator or QueryGenerator()
         self.validator = validator or QueryValidator()
         self.executor = executor
+        self.profiler = profiler or ResultProfiler()
+        self.selector = selector or ChartSelector()
+        self.renderer = renderer
+        self.assembler = assembler or ResponseAssembler()
 
     @classmethod
     def from_env(cls) -> "Orchestrator":
@@ -84,6 +108,26 @@ class Orchestrator:
 
         if self.executor is not None:
             result.dataframe = self.executor.execute(result.rendered_query)
+            result.result_profile = self.profiler.profile(result.dataframe)
+            result.chart_selection = self.selector.select(
+                result.query_plan.question_type,
+                result.result_profile,
+            )
+            if self.renderer is not None:
+                result.rendered_chart = self.renderer.render(
+                    result.dataframe,
+                    selection=result.chart_selection,
+                    query_plan=result.query_plan,
+                    profile=result.result_profile,
+                    sql=result.rendered_query.sql,
+                )
+            result.response = self.assembler.assemble(
+                question=question,
+                query_plan=result.query_plan,
+                dataframe=result.dataframe,
+                profile=result.result_profile,
+                selection=result.chart_selection,
+            )
 
         return result
 
@@ -101,4 +145,7 @@ class Orchestrator:
             else result.query_plan.model_dump(exclude_none=True),
             "sql": result.sql,
             "row_count": None if result.dataframe is None else len(result.dataframe),
+            "chart_type": None if result.chart_selection is None else result.chart_selection.chart_type,
+            "chart_path": result.chart_path,
+            "answer_text": result.answer_text,
         }

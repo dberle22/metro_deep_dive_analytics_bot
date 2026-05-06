@@ -1,6 +1,7 @@
 # Render heatmap table.
 
 source("visual_library/shared/chart_utils.R")
+source("visual_library/shared/render/render_cli_utils.R")
 
 heatmap_table_method_note <- function(data, cfg) {
   variant <- extract_chart_metadata(data, "heatmap_variant") %||% cfg$variant %||% "geo_metric"
@@ -168,4 +169,8 @@ render_heatmap_table <- function(data, config = list(), theme = NULL) {
       legend.position = cfg$legend_position,
       plot.margin = ggplot2::margin(t = 12, r = cfg$right_margin_pt, b = 12, l = 12)
     )
+}
+
+if (sys.nframe() == 0) {
+  run_renderer_cli(render_heatmap_table)
 }

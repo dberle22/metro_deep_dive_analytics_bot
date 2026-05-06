@@ -26,7 +26,7 @@
 - All IRS fields are currently null in all 1,020,930 rows by design for the ACS-only first version.
 
 ## Lineage
-1. **Primary build script**: [scripts/etl/gold/gold_migration_wide.sql](/Users/danberle/Documents/projects/metro_deep_dive/scripts/etl/gold/gold_migration_wide.sql)
+1. **Primary build script**: [scripts/etl/gold/gold_migration_wide.sql]
 2. **Primary upstream**:
    - `silver.migration_kpi`
 

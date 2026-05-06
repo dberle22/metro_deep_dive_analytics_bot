@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 import json
+import logging
 from pathlib import Path
 import re
 from typing import Any
@@ -16,6 +17,7 @@ from app.query.catalogs import REPO_ROOT, load_semantic_catalogs
 
 QUESTION_LIBRARY_PATH = REPO_ROOT / "examples" / "question_library.yml"
 DEFAULT_FEW_SHOT_COUNT = 8
+LOGGER = logging.getLogger(__name__)
 
 QUESTION_TYPE_ALIASES = {
     "compare": "comparison",
@@ -127,6 +129,7 @@ class ParseResult:
     clarification: ClarificationRequest | None = None
     matched_example_id: str | None = None
     provider_used: str | None = None
+    raw_llm_response: str | None = None
 
     @property
     def needs_clarification(self) -> bool:
@@ -146,26 +149,53 @@ class IntentParser:
         self.catalogs = load_semantic_catalogs()
         self.examples = self._load_examples()
 
-    def parse(self, question: str) -> ParseResult:
-        example = self._match_example(question)
-        if example is not None:
-            plan = QueryPlan.model_validate(example["structured_query_plan"])
-            return ParseResult(plan=plan, matched_example_id=example["example_id"])
+    def parse(
+        self,
+        question: str,
+        *,
+        force_provider: bool = False,
+    ) -> ParseResult:
+        if not force_provider:
+            example = self._match_example(question)
+            if example is not None:
+                plan = QueryPlan.model_validate(example["structured_query_plan"])
+                return ParseResult(plan=plan, matched_example_id=example["example_id"])
+
+            heuristic_plan = self._heuristic_parse(question)
+            if heuristic_plan is not None:
+                heuristic_result = self._finalize_plan(heuristic_plan)
+                if not heuristic_result.needs_clarification:
+                    return heuristic_result
+        else:
+            heuristic_plan = None
 
         if self.provider is not None:
-            payload = self.provider.complete_json(
-                system_prompt=self.build_system_prompt(),
-                user_prompt=self.build_user_prompt(question),
-            )
-            return self._parse_provider_payload(payload)
+            raw_llm_response: str | None = None
+            try:
+                payload = self.provider.complete_json(
+                    system_prompt=self.build_system_prompt(),
+                    user_prompt=self.build_user_prompt(question),
+                )
+                raw_llm_response = getattr(self.provider, "last_raw_response", None)
+                provider_result = self._parse_provider_payload(payload)
+            except Exception:
+                LOGGER.exception("LLM provider parsing failed for question: %s", question)
+                provider_result = None
 
-        heuristic_plan = self._heuristic_parse(question)
-        if heuristic_plan is not None:
-            return self._finalize_plan(heuristic_plan)
+            if provider_result is not None:
+                provider_result.raw_llm_response = raw_llm_response
+            if provider_result is not None and not provider_result.needs_clarification:
+                return provider_result
+            if not force_provider and heuristic_plan is not None:
+                return self._finalize_plan(heuristic_plan)
+            if provider_result is not None:
+                return provider_result
 
         return self._build_clarification(
             partial_plan={"question_type": self._infer_question_type(question)},
-            missing_fields=["metric_id", "geo_level", "question_type"],
+            missing_fields=self._default_missing_fields_for_question_type(
+                self._infer_question_type(question)
+            ),
         )
 
     def build_system_prompt(self) -> str:
@@ -193,7 +223,16 @@ class IntentParser:
             "If required slots are missing, return JSON with keys clarification_needed=true, "
             "missing_fields, message, and partial_plan.\n"
             "Otherwise return JSON with clarification_needed=false and a query_plan object.\n\n"
-            "Supported question types: ranking, trend, comparison, distribution, benchmark, growth.\n\n"
+            "Supported question types: ranking, trend, comparison, distribution, benchmark, growth.\n"
+            "IMPORTANT question type guidance:\n"
+            "- Use 'benchmark' when comparing ONE geography against the US, a national average, a regional "
+            "average, or a named peer set (e.g. 'How does Texas compare to the US?', 'Is California above "
+            "the national average?', 'How does Miami stack up against the national average?'). "
+            "Set benchmark_type='us' when the comparison is against the United States or national average.\n"
+            "- Use 'comparison' only when the user lists 2+ specific peer geographies to compare against "
+            "each other with no national/US reference.\n"
+            "- Use 'ranking' when the user wants a top-N or bottom-N list (e.g. 'Which states have the "
+            "highest population?').\n\n"
             "Approved tables:\n"
             f"{chr(10).join(table_lines)}\n\n"
             "Approved metrics:\n"
@@ -237,10 +276,25 @@ class IntentParser:
         provider_used: str | None = None,
     ) -> ParseResult:
         query_plan = plan if isinstance(plan, QueryPlan) else QueryPlan.model_validate(plan)
+        query_plan = self._hydrate_plan_defaults(query_plan)
         missing = self._required_missing_fields(query_plan)
         if missing:
             return self._build_clarification(query_plan.model_dump(exclude_none=True), missing, provider_used)
         return ParseResult(plan=query_plan, provider_used=provider_used)
+
+    _FIELD_LABELS: dict[str, str] = {
+        "geo_level": "which geography type (state, metro, county, etc.)",
+        "geo_ids": "which specific location",
+        "target_geo_id": "which specific location to compare",
+        "target_geo_level": "which geography type for the target location",
+        "metric_id": "which metric (population, income, home value, etc.)",
+        "base_metric_id": "which metric",
+        "benchmark_type": "what to benchmark against (US, region, or peer set)",
+        "start_year": "the starting year",
+        "end_year": "the ending year",
+        "window_years": "how many years to look back",
+        "sort_direction": "whether to sort highest-to-lowest or lowest-to-highest",
+    }
 
     def _build_clarification(
         self,
@@ -248,9 +302,12 @@ class IntentParser:
         missing_fields: list[str],
         provider_used: str | None = None,
     ) -> ParseResult:
-        labels = ", ".join(missing_fields)
+        readable = [self._FIELD_LABELS.get(f, f) for f in missing_fields if f != "year"]
+        if not readable:
+            readable = [self._FIELD_LABELS.get(f, f) for f in missing_fields]
+        labels = ", ".join(readable)
         clarification = ClarificationRequest(
-            message=f"I can help with that, but I need {labels} to build a safe query.",
+            message=f"I can help with that — I just need to know {labels}.",
             missing_fields=missing_fields,
             partial_plan=partial_plan,
         )
@@ -297,6 +354,35 @@ class IntentParser:
                 end_year=year or 2024,
             )
 
+        _us_ref = " us " in f" {normalized} " or "united states" in normalized or "national" in normalized or "nationwide" in normalized
+        _benchmark_signals = (
+            "benchmark" in normalized
+            or " versus " in normalized
+            or " vs " in normalized
+            or "stack up" in normalized
+            or ("compare" in normalized and _us_ref)
+            or ("above" in normalized and ("average" in normalized or "us" in normalized or "national" in normalized))
+            or ("below" in normalized and ("average" in normalized or "us" in normalized or "national" in normalized))
+        )
+
+        if _benchmark_signals:
+            target_geo_id = self._infer_target_geo_id(normalized)
+            target_geo_level = geo_level
+            if target_geo_id is not None and target_geo_level in {None, "us"}:
+                target_geo_level = "state"
+            return QueryPlan(
+                question_type="benchmark",
+                metric_id=metric["metric_id"] if metric else None,
+                source_table=metric["source_table"] if metric else None,
+                subject_area=metric["subject_area"] if metric else None,
+                target_geo_level=target_geo_level,
+                target_geo_id=target_geo_id,
+                year=year,
+                benchmark_type="us" if _us_ref else None,
+                benchmark_geo_level="us" if _us_ref else None,
+                comparison_label="United States" if _us_ref else None,
+            )
+
         if "compare" in normalized and "vs" not in normalized:
             return QueryPlan(
                 question_type="comparison",
@@ -317,32 +403,34 @@ class IntentParser:
                 year=year,
             )
 
-        if "benchmark" in normalized or "compare" in normalized or " versus " in normalized or " vs " in normalized:
-            target_geo_level = geo_level
-            return QueryPlan(
-                question_type="benchmark",
-                metric_id=metric["metric_id"] if metric else None,
-                source_table=metric["source_table"] if metric else None,
-                subject_area=metric["subject_area"] if metric else None,
-                target_geo_level=target_geo_level,
-                year=year,
-                benchmark_type="us" if " united states" in normalized or " us " in f" {normalized} " else None,
-            )
-
         if any(token in normalized for token in ["growth", "growing", "increase", "gain"]):
             base_metric = metric
             if base_metric is None:
                 base_metric = self._default_growth_metric(normalized)
+            start_year_match = re.search(r"\bsince\s+(20\d{2})\b", normalized)
+            start_year = int(start_year_match.group(1)) if start_year_match else None
+            end_year = year or 2024
+            if start_year is not None and end_year == start_year:
+                end_year = 2024
+            window_years = 5 if "5 year" in normalized or "five year" in normalized else None
+            if start_year is not None and end_year > start_year:
+                window_years = end_year - start_year
+            growth_question_type = (
+                "trend"
+                if any(token in normalized for token in ["over time", "trend"])
+                else "ranking"
+            )
             return QueryPlan(
-                question_type=question_type,
+                question_type=growth_question_type,
                 base_metric_id=base_metric["metric_id"] if base_metric else None,
                 source_table=base_metric["source_table"] if base_metric else None,
                 subject_area=base_metric["subject_area"] if base_metric else None,
                 geo_level=geo_level,
-                end_year=year,
-                window_years=5 if "5 year" in normalized or "five year" in normalized else None,
+                end_year=end_year,
+                window_years=window_years,
                 sort_direction=sort_direction,
                 limit=10,
+                template_id="growth",
             )
 
         if question_type == "ranking":
@@ -416,6 +504,31 @@ class IntentParser:
             return self.catalogs["metrics"]["median_gross_rent"]
         if "income" in question:
             return self.catalogs["metrics"]["calc_income_pc"]
+        return self.catalogs["metrics"]["pop_total"]
+
+    # Full state names only — 2-letter abbreviations are too ambiguous in natural language.
+    _STATE_NAME_TO_FIPS: dict[str, str] = {
+        "alabama": "01", "alaska": "02", "arizona": "04", "arkansas": "05",
+        "california": "06", "colorado": "08", "connecticut": "09", "delaware": "10",
+        "district of columbia": "11", "florida": "12", "georgia": "13",
+        "hawaii": "15", "idaho": "16", "illinois": "17", "indiana": "18",
+        "iowa": "19", "kansas": "20", "kentucky": "21", "louisiana": "22",
+        "maine": "23", "maryland": "24", "massachusetts": "25", "michigan": "26",
+        "minnesota": "27", "mississippi": "28", "missouri": "29", "montana": "30",
+        "nebraska": "31", "nevada": "32", "new hampshire": "33", "new jersey": "34",
+        "new mexico": "35", "new york": "36", "north carolina": "37",
+        "north dakota": "38", "ohio": "39", "oklahoma": "40", "oregon": "41",
+        "pennsylvania": "42", "rhode island": "44", "south carolina": "45",
+        "south dakota": "46", "tennessee": "47", "texas": "48", "utah": "49",
+        "vermont": "50", "virginia": "51", "washington": "53",
+        "west virginia": "54", "wisconsin": "55", "wyoming": "56",
+    }
+
+    def _infer_target_geo_id(self, question: str) -> str | None:
+        """Return a state FIPS code if the question names a US state."""
+        for name, fips in self._STATE_NAME_TO_FIPS.items():
+            if name in question:
+                return fips
         return None
 
     def _infer_geo_level(self, question: str) -> str | None:
@@ -432,6 +545,12 @@ class IntentParser:
             ("region", "region"),
             ("divisions", "division"),
             ("division", "division"),
+            ("places", "place"),
+            ("place", "place"),
+            ("cities", "place"),
+            ("city", "place"),
+            ("towns", "place"),
+            ("town", "place"),
             ("us", "us"),
             ("united states", "us"),
         ]
@@ -444,9 +563,41 @@ class IntentParser:
         match = re.search(r"\b(20\d{2})\b", question)
         if match:
             return int(match.group(1))
+        if re.search(r"\b(last|past)\s+\d+\s+years?\b", question) or "over the last" in question or "over the past" in question:
+            return 2024
         if "latest" in question or "current" in question:
             return 2024
         return None
+
+    def _default_missing_fields_for_question_type(self, question_type: str) -> list[str]:
+        if question_type == "growth":
+            return ["base_metric_id", "geo_level", "end_year", "window_years"]
+        if question_type == "trend":
+            return ["metric_id", "geo_level", "start_year", "end_year"]
+        return ["metric_id", "geo_level"]
+
+    def _hydrate_plan_defaults(self, plan: QueryPlan) -> QueryPlan:
+        payload = plan.model_dump(exclude_none=True)
+
+        if "source_table" not in payload:
+            metric_id = payload.get("metric_id") or payload.get("base_metric_id")
+            if metric_id in self.catalogs["metrics"]:
+                payload["source_table"] = self.catalogs["metrics"][metric_id]["source_table"]
+
+        if payload.get("template_id") in ("ranking", "growth") and "geo_level" not in payload:
+            payload["geo_level"] = "state"
+
+        if payload.get("template_id") == "growth":
+            payload.setdefault("question_type", "ranking")
+            payload.setdefault("end_year", 2024)
+            payload.setdefault("window_years", 5)
+            payload.setdefault("sort_direction", "desc")
+            payload.setdefault("limit", 10)
+
+        if payload.get("template_id") == "benchmark":
+            payload.setdefault("year", 2024)
+
+        return QueryPlan.model_validate(payload)
 
     def _load_examples(self) -> list[dict[str, Any]]:
         payload = yaml.safe_load(QUESTION_LIBRARY_PATH.read_text(encoding="utf-8"))

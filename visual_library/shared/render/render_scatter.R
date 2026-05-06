@@ -1,5 +1,7 @@
 # Render scatter chart from prepared data.
 
+source("visual_library/shared/render/render_cli_utils.R")
+
 render_scatter <- function(data,
                            title,
                            subtitle = NULL,
@@ -165,4 +167,28 @@ render_scatter <- function(data,
   }
 
   p
+}
+
+if (sys.nframe() == 0) {
+  run_renderer_cli(
+    render_scatter,
+    adapter = function(data, config, render_fn) {
+      render_fn(
+        data = data,
+        title = config$title %||% "Scatter Chart",
+        subtitle = config$subtitle %||% NULL,
+        highlight_mode = config$highlight_mode %||% "none",
+        add_trend_line = isTRUE(config$add_trend_line %||% TRUE),
+        add_reference_line = isTRUE(config$add_reference_line %||% FALSE),
+        add_quadrants = isTRUE(config$add_quadrants %||% FALSE),
+        palette = config$palette %||% NULL,
+        point_alpha = config$point_alpha %||% NULL,
+        trend_line_alpha = config$trend_line_alpha %||% NULL,
+        base_color = config$base_color %||% NULL,
+        highlight_color = config$highlight_color %||% NULL,
+        side_note = config$caption_side_note %||% NULL,
+        footer_note = config$caption_footer_note %||% NULL
+      )
+    }
+  )
 }

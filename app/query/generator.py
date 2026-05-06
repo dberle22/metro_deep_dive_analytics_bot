@@ -183,16 +183,30 @@ ORDER BY metric_value DESC, geo_name ASC
             plan=plan,
         )
 
+    _REFERENCE_BENCHMARK_TYPES = frozenset({"us", "region", "division"})
+
     def _render_benchmark(
         self, plan: dict[str, Any], metric: dict[str, Any], table_id: str
     ) -> RenderedQuery:
+        benchmark_type = plan["benchmark_type"]
+        benchmark_label = plan.get("comparison_label") or benchmark_type.replace("_", " ").title()
         benchmark_geo_level = (
             plan.get("benchmark_geo_level")
-            or (plan["benchmark_type"] if plan["benchmark_type"] in self.catalogs["geo_levels"] else None)
+            or (benchmark_type if benchmark_type in self.catalogs["geo_levels"] else None)
             or plan["target_geo_level"]
         )
-        benchmark_label = plan.get("comparison_label") or plan["benchmark_type"].replace("_", " ")
-        benchmark_where = self._benchmark_where_clause(plan, benchmark_geo_level)
+
+        if benchmark_type in self._REFERENCE_BENCHMARK_TYPES:
+            benchmark_cte = self._benchmark_cte_from_reference(
+                plan,
+                metric,
+                table_id,
+                benchmark_label,
+                benchmark_geo_level,
+            )
+        else:
+            benchmark_cte = self._benchmark_cte_inline(plan, metric, table_id, benchmark_label, benchmark_geo_level)
+
         sql = f"""
 {READ_ONLY_CTE_HINT}
 WITH target AS (
@@ -209,19 +223,7 @@ WITH target AS (
     AND base.year = {self._sql_literal(plan["year"])}
     AND base.{metric["source_column"]} IS NOT NULL
 ),
-benchmark AS (
-  SELECT
-    {self._sql_literal(benchmark_geo_level)} AS geo_level,
-    {self._sql_literal(plan.get("benchmark_geo_ids", [benchmark_label])[0])} AS geo_id,
-    {self._sql_literal(benchmark_label)} AS geo_name,
-    {self._sql_literal(plan["year"])} AS year,
-    AVG(base.{metric["source_column"]}) AS metric_value,
-    'benchmark' AS comparison_group
-  FROM {self._qualified_table(table_id)} AS base
-  WHERE {benchmark_where}
-    AND base.year = {self._sql_literal(plan["year"])}
-    AND base.{metric["source_column"]} IS NOT NULL
-)
+{benchmark_cte}
 SELECT
   geo_level,
   geo_id,
@@ -255,6 +257,77 @@ ORDER BY comparison_group ASC
             metric_ids=[metric["metric_id"]],
             plan={**plan, "benchmark_geo_level": benchmark_geo_level},
         )
+
+    def _benchmark_cte_from_reference(
+        self,
+        plan: dict[str, Any],
+        metric: dict[str, Any],
+        table_id: str,
+        benchmark_label: str,
+        benchmark_geo_level: str,
+    ) -> str:
+        """Benchmark CTE that prefers gold.benchmark_reference with an inline fallback."""
+        benchmark_geo_id_filter = ""
+        if plan.get("benchmark_geo_ids"):
+            benchmark_geo_id_filter = (
+                f"AND ref.benchmark_geo_id IN ({self._sql_list(plan['benchmark_geo_ids'])})"
+            )
+        inline_cte = self._benchmark_cte_inline(
+            plan,
+            metric,
+            table_id,
+            benchmark_label,
+            benchmark_geo_level,
+            cte_name="benchmark_inline",
+        )
+        return f"""reference_benchmark AS (
+  SELECT
+    ref.benchmark_level AS geo_level,
+    ref.benchmark_geo_id AS geo_id,
+    ref.benchmark_label AS geo_name,
+    ref.year,
+    ref.metric_value,
+    'benchmark' AS comparison_group
+  FROM gold.benchmark_reference ref
+  WHERE ref.benchmark_level = {self._sql_literal(plan["benchmark_type"])}
+    AND ref.source_table = {self._sql_literal(table_id)}
+    AND ref.metric_id = {self._sql_literal(metric["metric_id"])}
+    AND ref.year = {self._sql_literal(plan["year"])}
+    {benchmark_geo_id_filter}
+    AND ref.metric_value IS NOT NULL
+),
+{inline_cte},
+benchmark AS (
+  SELECT * FROM reference_benchmark
+  UNION ALL
+  SELECT * FROM benchmark_inline
+  WHERE NOT EXISTS (SELECT 1 FROM reference_benchmark)
+)"""
+
+    def _benchmark_cte_inline(
+        self,
+        plan: dict[str, Any],
+        metric: dict[str, Any],
+        table_id: str,
+        benchmark_label: str,
+        benchmark_geo_level: str,
+        cte_name: str = "benchmark",
+    ) -> str:
+        """Benchmark CTE that computes inline from the source table (peer benchmarks)."""
+        benchmark_where = self._benchmark_where_clause(plan, benchmark_geo_level)
+        return f"""{cte_name} AS (
+  SELECT
+    {self._sql_literal(benchmark_geo_level)} AS geo_level,
+    {self._sql_literal(plan.get("benchmark_geo_ids", [benchmark_label])[0])} AS geo_id,
+    {self._sql_literal(benchmark_label)} AS geo_name,
+    {self._sql_literal(plan["year"])} AS year,
+    AVG(base.{metric["source_column"]}) AS metric_value,
+    'benchmark' AS comparison_group
+  FROM {self._qualified_table(table_id)} AS base
+  WHERE {benchmark_where}
+    AND base.year = {self._sql_literal(plan["year"])}
+    AND base.{metric["source_column"]} IS NOT NULL
+)"""
 
     def _render_growth(self, plan: dict[str, Any]) -> RenderedQuery:
         metric = self._get_metric(plan["base_metric_id"])

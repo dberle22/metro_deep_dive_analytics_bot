@@ -1,6 +1,7 @@
 # Render line chart from prepared line data.
 
 source("visual_library/shared/chart_utils.R")
+source("visual_library/shared/render/render_cli_utils.R")
 
 line_axis_formatter <- function(label_style = "number", accuracy = NULL) {
   if (identical(label_style, "dollar")) {
@@ -314,4 +315,8 @@ render_line <- function(data, config = list(), theme = NULL) {
       legend.title = ggplot2::element_blank(),
       panel.grid.minor = ggplot2::element_blank()
     )
+}
+
+if (sys.nframe() == 0) {
+  run_renderer_cli(render_line)
 }

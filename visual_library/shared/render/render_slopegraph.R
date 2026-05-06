@@ -1,6 +1,7 @@
 # Render slopegraph.
 
 source("visual_library/shared/chart_utils.R")
+source("visual_library/shared/render/render_cli_utils.R")
 
 slopegraph_axis_formatter <- function(label_style = "number", accuracy = NULL) {
   if (identical(label_style, "dollar")) {
@@ -324,4 +325,8 @@ render_slopegraph <- function(data, config = list(), theme = NULL) {
       legend.position = "none",
       plot.margin = ggplot2::margin(t = 12, r = cfg$right_margin_pt, b = 12, l = 12)
     )
+}
+
+if (sys.nframe() == 0) {
+  run_renderer_cli(render_slopegraph)
 }

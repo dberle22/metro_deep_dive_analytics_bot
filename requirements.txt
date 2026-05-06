@@ -6,3 +6,6 @@ pandas
 pydantic
 PyYAML
 networkx
+streamlit
+plotly
+altair<5

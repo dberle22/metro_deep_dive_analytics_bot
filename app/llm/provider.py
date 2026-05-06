@@ -50,13 +50,13 @@ class OpenAICompatibleProvider(LLMProvider):
     def complete_json(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
         response = self.client.chat.completions.create(
             model=self.model,
-            response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt},
             ],
         )
         content = response.choices[0].message.content or "{}"
+        self.last_raw_response: str = content
         return json.loads(content)
 
 

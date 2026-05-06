@@ -33,7 +33,7 @@
 - The zero state coverage indicates an identifier mismatch between affordability output `state` `geo_id` values and MARPP state IDs; treat state-level RPP fields as incomplete in the current snapshot.
 
 ## Lineage
-1. **Primary build script**: [scripts/etl/gold/gold_affordability_wide.sql](/Users/danberle/Documents/projects/metro_deep_dive/scripts/etl/gold/gold_affordability_wide.sql)
+1. **Primary build script**: [scripts/etl/gold/gold_affordability_wide.sql]
 2. **Primary upstreams**:
    - `gold.housing_core_wide`
    - `gold.economics_income_wide`

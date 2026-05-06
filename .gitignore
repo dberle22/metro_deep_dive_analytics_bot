@@ -4,3 +4,7 @@
 .venv/
 __pycache__/
 .pytest_cache/
+runs/
+model_test.md
+OLLAMA_DEBUG_HANDOFF.md
+data/duckdb/*.duckdb

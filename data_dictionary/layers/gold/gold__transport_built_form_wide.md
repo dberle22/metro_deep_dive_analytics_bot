@@ -33,7 +33,7 @@
 - `zcta`, `place`, `division`, `region`, and `us` currently carry transport metrics but not density outputs.
 
 ## Lineage
-1. **Primary build script**: [scripts/etl/gold/gold_transport_built_form_wide.sql](/Users/danberle/Documents/projects/metro_deep_dive/scripts/etl/gold/gold_transport_built_form_wide.sql)
+1. **Primary build script**: [scripts/etl/gold/gold_transport_built_form_wide.sql]
 2. **Primary upstreams**:
    - `silver.transport_kpi`
    - `silver.xwalk_tract_county`

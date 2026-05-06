@@ -146,7 +146,6 @@ examples:
       source_table: housing_core_wide
       geo_level: state
       year: 2024
-      target_geo_id: "12"
 
   - example_id: q11_distribution_cbsa_rent_to_income
     natural_language_question: Show the spread of rent-to-income ratios across CBSAs in 2024.
@@ -160,7 +159,6 @@ examples:
       source_table: housing_core_wide
       geo_level: cbsa
       year: 2024
-      target_geo_id: "48900"
 
   - example_id: q12_distribution_county_income
     natural_language_question: Show the distribution of county per-capita income in 2023.
@@ -174,7 +172,57 @@ examples:
       source_table: economics_income_wide
       geo_level: county
       year: 2023
-      target_geo_id: "12086"
+
+  - example_id: q13a_benchmark_texas_vs_us_income
+    natural_language_question: How does Texas household income stack up against the national average?
+    expected_template_type: benchmark
+    expected_sql_pattern: ["with target as", "avg(base.median_hh_income)", "comparison_group"]
+    expected_chart_type: bar
+    structured_query_plan:
+      template_id: benchmark
+      question_type: benchmark
+      metric_id: median_hh_income
+      source_table: economics_income_wide
+      target_geo_level: state
+      target_geo_id: "48"
+      year: 2024
+      benchmark_type: us
+      benchmark_geo_level: us
+      comparison_label: United States
+
+  - example_id: q13b_benchmark_california_vs_us_home_value
+    natural_language_question: Is California's median home value above the US average in 2024?
+    expected_template_type: benchmark
+    expected_sql_pattern: ["with target as", "avg(base.median_home_value)", "comparison_group"]
+    expected_chart_type: bar
+    structured_query_plan:
+      template_id: benchmark
+      question_type: benchmark
+      metric_id: median_home_value
+      source_table: housing_core_wide
+      target_geo_level: state
+      target_geo_id: "06"
+      year: 2024
+      benchmark_type: us
+      benchmark_geo_level: us
+      comparison_label: United States
+
+  - example_id: q13c_benchmark_florida_vs_us_population_2024
+    natural_language_question: Compare Florida's population to the US in 2024.
+    expected_template_type: benchmark
+    expected_sql_pattern: ["with target as", "avg(base.pop_total)", "comparison_group"]
+    expected_chart_type: bar
+    structured_query_plan:
+      template_id: benchmark
+      question_type: benchmark
+      metric_id: pop_total
+      source_table: population_demographics
+      target_geo_level: state
+      target_geo_id: "12"
+      year: 2024
+      benchmark_type: us
+      benchmark_geo_level: us
+      comparison_label: United States
 
   - example_id: q13_benchmark_florida_vs_us_population
     natural_language_question: Compare Florida population with the US in 2024.

@@ -1,6 +1,7 @@
 # Render grouped boxplots.
 
 source("visual_library/shared/chart_utils.R")
+source("visual_library/shared/render/render_cli_utils.R")
 
 boxplot_axis_formatter <- function(style = "number", accuracy = NULL, compact = TRUE) {
   value_label_formatter(
@@ -231,4 +232,8 @@ render_boxplot <- function(data, config = list(), theme = NULL) {
       panel.grid.minor = ggplot2::element_blank(),
       axis.title.y = ggplot2::element_text(margin = ggplot2::margin(r = 8))
     )
+}
+
+if (sys.nframe() == 0) {
+  run_renderer_cli(render_boxplot)
 }

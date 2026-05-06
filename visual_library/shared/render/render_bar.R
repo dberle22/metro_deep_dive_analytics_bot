@@ -1,6 +1,7 @@
 # Render bar charts from prepared bar data.
 
 source("visual_library/shared/chart_utils.R")
+source("visual_library/shared/render/render_cli_utils.R")
 
 bar_value_labeler <- function(values, label_style = "number", accuracy = NULL) {
   if (identical(label_style, "dollar")) {
@@ -99,8 +100,8 @@ render_bar <- function(data, config = list(), theme = NULL) {
   plot_data <- data
   value_var <- if ("plot_value" %in% names(plot_data)) "plot_value" else "metric_value"
   order_var <- if ("display_order" %in% names(plot_data)) "display_order" else value_var
-  plot_data <- plot_data[order(plot_data[[order_var]], decreasing = FALSE), , drop = FALSE]
-  plot_data$geo_name <- factor(plot_data$geo_name, levels = rev(plot_data$geo_name))
+  plot_data <- plot_data[order(plot_data[[order_var]], decreasing = !isTRUE(cfg$sort_desc)), , drop = FALSE]
+  plot_data$geo_name <- factor(plot_data$geo_name, levels = plot_data$geo_name)
 
   fill_scale <- NULL
   if ("highlight_flag" %in% names(plot_data) && any(plot_data$highlight_flag %in% TRUE, na.rm = TRUE)) {
@@ -247,4 +248,8 @@ render_bar <- function(data, config = list(), theme = NULL) {
       legend.title = ggplot2::element_blank(),
       plot.margin = ggplot2::margin(t = 12, r = cfg$right_margin_pt, b = 12, l = 12)
     )
+}
+
+if (sys.nframe() == 0) {
+  run_renderer_cli(render_bar)
 }

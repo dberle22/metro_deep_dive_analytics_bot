@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import unittest
+from unittest.mock import patch
 
 from app.intent.parser import IntentParser
 from app.llm.provider import LLMProvider
@@ -20,6 +21,11 @@ class StubProvider(LLMProvider):
         return self.payload
 
 
+class RaisingProvider(LLMProvider):
+    def complete_json(self, system_prompt: str, user_prompt: str) -> dict:
+        raise RuntimeError("provider exploded")
+
+
 class IntentParserTests(unittest.TestCase):
     def test_parser_exact_match_recovers_example_plan(self) -> None:
         parser = IntentParser()
@@ -33,16 +39,18 @@ class IntentParserTests(unittest.TestCase):
         self.assertEqual(result.plan.metric_id, "pop_total")
         self.assertEqual(result.plan.geo_level, "state")
 
-    def test_parser_returns_targeted_clarification_when_required_slots_are_missing(self) -> None:
+    def test_parser_defaults_underspecified_growth_question(self) -> None:
         parser = IntentParser()
         result = parser.parse("Which places are growing fastest?")
 
-        self.assertTrue(result.needs_clarification)
-        self.assertIsNotNone(result.clarification)
-        assert result.clarification is not None
-        self.assertIn("base_metric_id", result.clarification.missing_fields)
-        self.assertIn("end_year", result.clarification.missing_fields)
-        self.assertIn("window_years", result.clarification.missing_fields)
+        self.assertFalse(result.needs_clarification)
+        self.assertIsNotNone(result.plan)
+        assert result.plan is not None
+        self.assertEqual(result.plan.template_id, "growth")
+        self.assertEqual(result.plan.base_metric_id, "pop_total")
+        self.assertEqual(result.plan.geo_level, "place")
+        self.assertEqual(result.plan.end_year, 2024)
+        self.assertEqual(result.plan.window_years, 5)
 
     def test_parser_can_use_provider_payload(self) -> None:
         parser = IntentParser(
@@ -69,6 +77,18 @@ class IntentParserTests(unittest.TestCase):
         self.assertIsNotNone(result.plan)
         assert result.plan is not None
         self.assertEqual(result.plan.metric_id, "median_hh_income")
+
+    @patch("app.intent.parser.LOGGER")
+    def test_parser_logs_provider_failures_before_falling_back(self, mock_logger) -> None:
+        parser = IntentParser(provider=RaisingProvider())
+
+        result = parser.parse(
+            "Which states had the highest total population in 2024?",
+            force_provider=True,
+        )
+
+        self.assertTrue(result.needs_clarification)
+        self.assertTrue(mock_logger.exception.called)
 
     def test_parser_matches_question_library_examples_at_target_rate(self) -> None:
         parser = IntentParser()
