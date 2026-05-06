@@ -372,37 +372,57 @@ def render_map(
     if non_null_rows.empty:
         fig = go.Figure()
     elif use_quantiles:
-        fig = px.choropleth_mapbox(
-            non_null_rows,
-            geojson=merged_geojson,
-            locations="geo_id",
-            color="color_bucket",
-            featureidkey="properties.geo_id",
-            mapbox_style="carto-positron",
-            center=MAP_CENTER,
-            zoom=MAP_ZOOM,
-            color_discrete_sequence=QUANTILE_COLOR_SEQUENCE,
-            category_orders={
-                "color_bucket": [
-                    "0-20th pct",
-                    "20-40th pct",
-                    "40-60th pct",
-                    "60-80th pct",
-                    "80-95th pct",
-                    "95-99th pct",
-                    "99-100th pct",
-                ]
-            },
-            height=450,
-            custom_data=["geo_name", "formatted_value", "color_bucket"],
-        )
-        fig.update_traces(
-            hovertemplate=(
-                f"<b>%{{customdata[0]}}</b><br>{map_kpi_display}: %{{customdata[1]}}"
-                "<br>Quantile: %{customdata[2]}<extra></extra>"
-            ),
-            marker_line_width=0.2,
-        )
+        try:
+            fig = px.choropleth_mapbox(
+                non_null_rows,
+                geojson=merged_geojson,
+                locations="geo_id",
+                color="color_bucket",
+                featureidkey="properties.geo_id",
+                mapbox_style="carto-positron",
+                center=MAP_CENTER,
+                zoom=MAP_ZOOM,
+                color_discrete_sequence=QUANTILE_COLOR_SEQUENCE,
+                category_orders={
+                    "color_bucket": [
+                        "0-20th pct",
+                        "20-40th pct",
+                        "40-60th pct",
+                        "60-80th pct",
+                        "80-95th pct",
+                        "95-99th pct",
+                        "99-100th pct",
+                    ]
+                },
+                height=450,
+                custom_data=["geo_name", "formatted_value", "color_bucket"],
+            )
+            fig.update_traces(
+                hovertemplate=(
+                    f"<b>%{{customdata[0]}}</b><br>{map_kpi_display}: %{{customdata[1]}}"
+                    "<br>Quantile: %{customdata[2]}<extra></extra>"
+                ),
+                marker_line_width=0.2,
+            )
+        except ValueError:
+            use_quantiles = "raw"
+            fig = px.choropleth_mapbox(
+                non_null_rows,
+                geojson=merged_geojson,
+                locations="geo_id",
+                color=map_kpi_column,
+                featureidkey="properties.geo_id",
+                mapbox_style="carto-positron",
+                center=MAP_CENTER,
+                zoom=MAP_ZOOM,
+                color_continuous_scale=color_scale,
+                height=450,
+                custom_data=["geo_name", "formatted_value"],
+            )
+            fig.update_traces(
+                hovertemplate=f"<b>%{{customdata[0]}}</b><br>{map_kpi_display}: %{{customdata[1]}}<extra></extra>",
+                marker_line_width=0.2,
+            )
     else:
         fig = px.choropleth_mapbox(
             non_null_rows,
