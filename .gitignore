@@ -8,3 +8,4 @@ runs/
 model_test.md
 OLLAMA_DEBUG_HANDOFF.md
 data/duckdb/*.duckdb
+!data/duckdb/metro_deep_dive_runtime.duckdb

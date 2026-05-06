@@ -1,0 +1,144 @@
+"""Build a slim runtime DuckDB for the chatbot and reference dashboard."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import duckdb
+import yaml
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_SOURCE = REPO_ROOT / "data" / "duckdb" / "metro_deep_dive_reference.duckdb"
+DEFAULT_TARGET = REPO_ROOT / "data" / "duckdb" / "metro_deep_dive_runtime.duckdb"
+TABLE_CATALOG_PATH = REPO_ROOT / "semantic_layer" / "table_catalog.yml"
+METRIC_CATALOG_PATH = REPO_ROOT / "semantic_layer" / "metric_catalog.yml"
+
+
+SUPPORT_TABLES: dict[str, list[str]] = {
+    "geo.states": ["state_fips", "state_name", "geom"],
+    "geo.counties": ["county_geoid", "county_name", "state_fips", "geom"],
+    "geo.cbsas": ["cbsa_code", "cbsa_name", "geom"],
+    "silver.xwalk_cbsa_state": ["cbsa_code", "state_fips"],
+    "silver.xwalk_state_region": ["state_fips", "census_region", "census_division"],
+}
+
+BENCHMARK_COLUMNS = [
+    "benchmark_level",
+    "benchmark_geo_id",
+    "benchmark_label",
+    "source_table",
+    "metric_id",
+    "year",
+    "metric_value",
+]
+
+
+def _load_yaml(path: Path) -> dict:
+    with path.open("r", encoding="utf-8") as handle:
+        return yaml.safe_load(handle)
+
+
+def _quoted_columns(columns: list[str]) -> str:
+    return ", ".join(f'"{column}"' for column in columns)
+
+
+def _active_runtime_tables() -> dict[str, dict]:
+    table_catalog = _load_yaml(TABLE_CATALOG_PATH)
+    metric_catalog = _load_yaml(METRIC_CATALOG_PATH)
+
+    active_tables = {
+        entry["table_id"]: entry
+        for entry in table_catalog["tables"]
+        if entry.get("status") == "active"
+    }
+
+    metric_columns_by_table: dict[str, set[str]] = {table_id: set() for table_id in active_tables}
+    for metric in metric_catalog["metrics"]:
+        table_id = metric.get("source_table")
+        source_column = metric.get("source_column")
+        if table_id in metric_columns_by_table and source_column:
+            metric_columns_by_table[table_id].add(source_column)
+
+    selected: dict[str, dict] = {}
+    for table_id, entry in active_tables.items():
+        core_columns = {
+            entry["geo_id_field"],
+            entry["geo_level_field"],
+            entry["geo_name_field"],
+            entry["time_field"],
+            *entry.get("primary_key", []),
+        }
+        selected_columns = sorted(core_columns | metric_columns_by_table[table_id])
+        fq_table = f'{entry["schema"]}.{entry["table_name"]}'
+        selected[fq_table] = {
+            "table_id": table_id,
+            "table_name": entry["table_name"],
+            "schema": entry["schema"],
+            "columns": selected_columns,
+        }
+    return selected
+
+
+def build_runtime_duckdb(source: Path, target: Path) -> None:
+    runtime_tables = _active_runtime_tables()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    if target.exists():
+        target.unlink()
+
+    con = duckdb.connect(str(target), read_only=False)
+    try:
+        con.execute(f"ATTACH '{source}' AS source_db (READ_ONLY)")
+
+        for schema in ("gold", "geo", "silver"):
+            con.execute(f"CREATE SCHEMA IF NOT EXISTS {schema}")
+
+        for fq_table, meta in runtime_tables.items():
+            create_sql = f"""
+                CREATE TABLE {fq_table} AS
+                SELECT {_quoted_columns(meta["columns"])}
+                FROM source_db.{fq_table}
+            """
+            con.execute(create_sql)
+
+        active_table_names = sorted(meta["table_name"] for meta in runtime_tables.values())
+        active_tables_sql = ", ".join(f"'{name}'" for name in active_table_names)
+        con.execute(
+            f"""
+            CREATE TABLE gold.benchmark_reference AS
+            SELECT {_quoted_columns(BENCHMARK_COLUMNS)}
+            FROM source_db.gold.benchmark_reference
+            WHERE source_table IN ({active_tables_sql})
+            """
+        )
+
+        for fq_table, columns in SUPPORT_TABLES.items():
+            con.execute(
+                f"""
+                CREATE TABLE {fq_table} AS
+                SELECT {_quoted_columns(columns)}
+                FROM source_db.{fq_table}
+                """
+            )
+
+        con.execute("CHECKPOINT")
+    finally:
+        con.close()
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
+    parser.add_argument("--target", type=Path, default=DEFAULT_TARGET)
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    build_runtime_duckdb(source=args.source, target=args.target)
+    print(f"Created runtime DuckDB: {args.target}")
+
+
+if __name__ == "__main__":
+    main()
