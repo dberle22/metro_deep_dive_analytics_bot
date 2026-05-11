@@ -30,7 +30,7 @@ occ_vars <- acs_v23 %>%
                     "C24010_"
   ))
 
-# write_csv(occ_vars, "/Users/danberle/Desktop/occ_vars.csv")
+# write_csv(occ_vars, here::here("analysis", "occ_vars.csv"))
 
 # Check Industry Vars
 ind_vars <- acs_v23 %>%
@@ -38,7 +38,7 @@ ind_vars <- acs_v23 %>%
                     "C24030_"
   ))
 
-# write_csv(ind_vars, "/Users/danberle/Desktop/ind_vars.csv")
+# write_csv(ind_vars, here::here("analysis", "ind_vars.csv"))
 
 # Labor (B23025)
 

@@ -30,7 +30,7 @@ A constrained analytical chatbot that converts natural language questions about 
 
 ### Data Path Strategy
 
-- **Development and testing:** Local DuckDB at `/Users/danberle/Documents/projects/data/duckdb/metro_deep_dive.duckdb`
+- **Development and testing:** Repo-local DuckDB at `data/duckdb/metro_deep_dive_runtime.duckdb` by default
 - **Production deployment:** MotherDuck (migration handled in Phase 6)
 - The `DB_CONNECTION` env var controls which is used; app code is identical for both
 
@@ -137,7 +137,7 @@ metro_deep_dive_chatbot/
 - [x] Verify local DuckDB connection is readable:
   ```python
   import duckdb
-  con = duckdb.connect("/Users/danberle/Documents/projects/data/duckdb/metro_deep_dive.duckdb", read_only=True)
+  con = duckdb.connect("data/duckdb/metro_deep_dive_runtime.duckdb", read_only=True)
   con.execute("SHOW TABLES").fetchall()
   ```
 - [x] Confirm all 9 Gold tables are present and queryable

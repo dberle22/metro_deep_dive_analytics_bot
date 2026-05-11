@@ -18,7 +18,7 @@ Three repos form the core of this work:
 
 The chatbot is a consumer of the Gold layer built by `metro_database_build`. The R visual library in `metro_deep_dive` is the chart rendering engine for the chatbot.
 
-**Shared data path (dev):** `/Users/danberle/Documents/projects/data/duckdb/metro_deep_dive.duckdb`
+**Shared data path (dev):** `data/duckdb/metro_deep_dive_runtime.duckdb` by default, or `DB_CONNECTION` when overriding the runtime database path
 
 ---
 
@@ -313,7 +313,7 @@ class QueryPlan(BaseModel):
 
 ```bash
 # Data
-DB_CONNECTION=/Users/danberle/Documents/projects/data/duckdb/metro_deep_dive.duckdb
+DB_CONNECTION=data/duckdb/metro_deep_dive_runtime.duckdb
 
 # LLM — local dev
 LLM_PROVIDER=ollama
