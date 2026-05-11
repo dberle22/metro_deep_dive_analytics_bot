@@ -52,6 +52,38 @@ class IntentParserTests(unittest.TestCase):
         self.assertEqual(result.plan.end_year, 2024)
         self.assertEqual(result.plan.window_years, 5)
 
+    def test_parser_infers_multi_state_geo_ids_for_comparison(self) -> None:
+        parser = IntentParser()
+
+        result = parser.parse(
+            "Compare California, Texas, and Florida on median household income in 2024."
+        )
+
+        self.assertFalse(result.needs_clarification)
+        self.assertIsNotNone(result.plan)
+        assert result.plan is not None
+        self.assertEqual(result.plan.template_id, "compare_selected")
+        self.assertEqual(result.plan.geo_level, "state")
+        self.assertEqual(result.plan.geo_ids, ["06", "48", "12"])
+        self.assertEqual(result.plan.metric_id, "median_hh_income")
+        self.assertEqual(result.plan.year, 2024)
+
+    def test_parser_preserves_user_geo_order_for_comparison(self) -> None:
+        parser = IntentParser()
+
+        result = parser.parse(
+            "How do New York, Illinois, and Washington compare on median home values in 2024?"
+        )
+
+        self.assertFalse(result.needs_clarification)
+        self.assertIsNotNone(result.plan)
+        assert result.plan is not None
+        self.assertEqual(result.plan.template_id, "compare_selected")
+        self.assertEqual(result.plan.geo_level, "state")
+        self.assertEqual(result.plan.geo_ids, ["36", "17", "53"])
+        self.assertEqual(result.plan.metric_id, "median_home_value")
+        self.assertEqual(result.plan.year, 2024)
+
     def test_parser_can_use_provider_payload(self) -> None:
         parser = IntentParser(
             provider=StubProvider(
@@ -77,6 +109,80 @@ class IntentParserTests(unittest.TestCase):
         self.assertIsNotNone(result.plan)
         assert result.plan is not None
         self.assertEqual(result.plan.metric_id, "median_hh_income")
+
+    def test_parser_normalizes_provider_benchmark_alias_fields(self) -> None:
+        parser = IntentParser(
+            provider=StubProvider(
+                {
+                    "clarification_needed": False,
+                    "query_plan": {
+                        "question_type": "benchmark",
+                        "metric_id": "median_hh_income",
+                        "source_table": "economics_income_wide",
+                        "geo_id": "48",
+                        "geo_level": "state",
+                        "benchmark_type": "us",
+                    },
+                }
+            )
+        )
+
+        result = parser.parse(
+            "How does Texas household income stack up against the national average?",
+            force_provider=True,
+        )
+
+        self.assertFalse(result.needs_clarification)
+        assert result.plan is not None
+        self.assertEqual(result.plan.template_id, "benchmark")
+        self.assertEqual(result.plan.target_geo_id, "48")
+        self.assertEqual(result.plan.target_geo_level, "state")
+        self.assertEqual(result.plan.year, 2024)
+
+    def test_parser_can_salvage_provider_clarification_from_partial_plan(self) -> None:
+        parser = IntentParser(
+            provider=StubProvider(
+                {
+                    "clarification_needed": True,
+                    "message": "Need year.",
+                    "missing_fields": ["year"],
+                    "partial_plan": {
+                        "question_type": "ranking",
+                        "metric_id": "pop_growth_5yr",
+                        "source_table": "population_demographics",
+                        "geo_level": "state",
+                        "sort_direction": "desc",
+                        "limit": 10,
+                    },
+                }
+            )
+        )
+
+        result = parser.parse(
+            "What are the fastest-growing states by population over the last five years?",
+            force_provider=True,
+        )
+
+        self.assertFalse(result.needs_clarification)
+        assert result.plan is not None
+        self.assertEqual(result.plan.template_id, "growth")
+        self.assertEqual(result.plan.base_metric_id, "pop_total")
+        self.assertEqual(result.plan.end_year, 2024)
+        self.assertEqual(result.plan.window_years, 5)
+
+    def test_force_provider_without_provider_still_uses_heuristics(self) -> None:
+        parser = IntentParser()
+
+        result = parser.parse(
+            "Is California's median home value above the US average in 2024?",
+            force_provider=True,
+        )
+
+        self.assertFalse(result.needs_clarification)
+        assert result.plan is not None
+        self.assertEqual(result.plan.template_id, "benchmark")
+        self.assertEqual(result.plan.target_geo_id, "06")
+        self.assertEqual(result.plan.benchmark_type, "us")
 
     @patch("app.intent.parser.LOGGER")
     def test_parser_logs_provider_failures_before_falling_back(self, mock_logger) -> None:

@@ -26,7 +26,7 @@ Key directories:
 - `visual_library/shared/render/` — R chart rendering scripts
 - `examples/question_library.yml` — few-shot examples used in the LLM system prompt
 
-QA loop 1 was run with 10 prompts via `app/scripts/qa_batch.py`. Human reviews are in `runs/qa_batch/loop1/*/qa_review.json`. The full QA framework is in `QA_FRAMEWORK.md`.
+QA loop 1 was run with 10 prompts via `app/scripts/qa_batch.py`. Human reviews are in `runs/qa_batch/loop1/*/qa_review.json`. The full QA framework is in `qa/QA_FRAMEWORK.md`.
 
 After completing all fixes, re-run the batch and verify outcomes as described at the bottom of this brief.
 

@@ -114,8 +114,9 @@ class Orchestrator:
                 result.result_profile,
             )
             if self.renderer is not None:
+                chart_dataframe = self._chart_dataframe(result)
                 result.rendered_chart = self.renderer.render(
-                    result.dataframe,
+                    chart_dataframe,
                     selection=result.chart_selection,
                     query_plan=result.query_plan,
                     profile=result.result_profile,
@@ -149,3 +150,28 @@ class Orchestrator:
             "chart_path": result.chart_path,
             "answer_text": result.answer_text,
         }
+
+    def _chart_dataframe(self, result: OrchestrationResult) -> pd.DataFrame | None:
+        dataframe = result.dataframe
+        query_plan = result.query_plan
+        if dataframe is None or query_plan is None:
+            return dataframe
+        if query_plan.template_id != "trend" or query_plan.geo_ids:
+            return dataframe
+        if "period" not in dataframe.columns or "geo_name" not in dataframe.columns or "metric_value" not in dataframe.columns:
+            return dataframe
+
+        unique_geos = dataframe["geo_name"].dropna().unique().tolist()
+        if len(unique_geos) <= 10:
+            return dataframe
+
+        latest_period = dataframe["period"].dropna().max()
+        latest_rows = dataframe[dataframe["period"] == latest_period]
+        if latest_rows.empty:
+            return dataframe
+        top_geos = (
+            latest_rows.sort_values(by=["metric_value", "geo_name"], ascending=[False, True])
+            .head(10)["geo_name"]
+            .tolist()
+        )
+        return dataframe[dataframe["geo_name"].isin(top_geos)].copy()

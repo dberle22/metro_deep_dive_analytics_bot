@@ -155,6 +155,7 @@ class IntentParser:
         *,
         force_provider: bool = False,
     ) -> ParseResult:
+        heuristic_plan: QueryPlan | None = None
         if not force_provider:
             example = self._match_example(question)
             if example is not None:
@@ -166,8 +167,12 @@ class IntentParser:
                 heuristic_result = self._finalize_plan(heuristic_plan)
                 if not heuristic_result.needs_clarification:
                     return heuristic_result
-        else:
-            heuristic_plan = None
+        elif self.provider is None:
+            heuristic_plan = self._heuristic_parse(question)
+            if heuristic_plan is not None:
+                heuristic_result = self._finalize_plan(heuristic_plan)
+                if not heuristic_result.needs_clarification:
+                    return heuristic_result
 
         if self.provider is not None:
             raw_llm_response: str | None = None
@@ -177,7 +182,7 @@ class IntentParser:
                     user_prompt=self.build_user_prompt(question),
                 )
                 raw_llm_response = getattr(self.provider, "last_raw_response", None)
-                provider_result = self._parse_provider_payload(payload)
+                provider_result = self._parse_provider_payload(question, payload)
             except Exception:
                 LOGGER.exception("LLM provider parsing failed for question: %s", question)
                 provider_result = None
@@ -228,9 +233,11 @@ class IntentParser:
             "- Use 'benchmark' when comparing ONE geography against the US, a national average, a regional "
             "average, or a named peer set (e.g. 'How does Texas compare to the US?', 'Is California above "
             "the national average?', 'How does Miami stack up against the national average?'). "
-            "Set benchmark_type='us' when the comparison is against the United States or national average.\n"
+            "Set benchmark_type='us' when the comparison is against the United States or national average. "
+            "For benchmark questions, use target_geo_level and target_geo_id for the focal geography.\n"
             "- Use 'comparison' only when the user lists 2+ specific peer geographies to compare against "
-            "each other with no national/US reference.\n"
+            "each other with no national/US reference. If the user asks for a side-by-side comparison over "
+            "time, keep template_id='trend' but set question_type='comparison'.\n"
             "- Use 'ranking' when the user wants a top-N or bottom-N list (e.g. 'Which states have the "
             "highest population?').\n\n"
             "Approved tables:\n"
@@ -249,26 +256,32 @@ class IntentParser:
             f"Question: {question}\n"
         )
 
-    def _parse_provider_payload(self, payload: dict[str, Any]) -> ParseResult:
+    def _parse_provider_payload(self, question: str, payload: dict[str, Any]) -> ParseResult:
+        provider_name = type(self.provider).__name__
         if payload.get("clarification_needed"):
+            partial_plan = self._normalize_provider_plan(question, payload.get("partial_plan") or {})
+            if partial_plan:
+                finalized = self._finalize_plan(partial_plan, provider_used=provider_name)
+                if not finalized.needs_clarification:
+                    return finalized
             clarification = ClarificationRequest.model_validate(
                 {
                     "message": payload.get("message") or "Please clarify the missing intent slots.",
                     "missing_fields": payload.get("missing_fields") or [],
-                    "partial_plan": payload.get("partial_plan") or {},
+                    "partial_plan": partial_plan,
                 }
             )
-            return ParseResult(clarification=clarification, provider_used=type(self.provider).__name__)
+            return ParseResult(clarification=clarification, provider_used=provider_name)
 
-        query_plan_payload = payload.get("query_plan", payload)
+        query_plan_payload = self._normalize_provider_plan(question, payload.get("query_plan", payload))
         try:
             plan = QueryPlan.model_validate(query_plan_payload)
         except ValidationError:
             heuristic_plan = self._heuristic_parse(json.dumps(query_plan_payload, sort_keys=True))
             if heuristic_plan is None:
                 raise
-            return self._finalize_plan(heuristic_plan, provider_used=type(self.provider).__name__)
-        return self._finalize_plan(plan, provider_used=type(self.provider).__name__)
+            return self._finalize_plan(heuristic_plan, provider_used=provider_name)
+        return self._finalize_plan(plan, provider_used=provider_name)
 
     def _finalize_plan(
         self,
@@ -343,6 +356,25 @@ class IntentParser:
         if metric is None and not any(token in normalized for token in ["growth", "growing", "increase", "gain"]):
             return None
 
+        if (
+            ("compare" in normalized or "side-by-side" in normalized)
+            and any(token in normalized for token in ["over time", "trend"])
+        ):
+            geo_ids = self._infer_geo_ids(normalized, geo_level)
+            if geo_ids and geo_level in {None, "us"}:
+                geo_level = "state"
+            return QueryPlan(
+                question_type="comparison",
+                metric_id=metric["metric_id"] if metric else None,
+                source_table=metric["source_table"] if metric else None,
+                subject_area=metric["subject_area"] if metric else None,
+                geo_level=geo_level,
+                geo_ids=geo_ids,
+                start_year=2015,
+                end_year=year or 2024,
+                template_id="trend",
+            )
+
         if "over time" in normalized or "trend" in normalized:
             return QueryPlan(
                 question_type="trend",
@@ -384,12 +416,16 @@ class IntentParser:
             )
 
         if "compare" in normalized and "vs" not in normalized:
+            geo_ids = self._infer_geo_ids(normalized, geo_level)
+            if geo_ids and geo_level in {None, "us"}:
+                geo_level = "state"
             return QueryPlan(
                 question_type="comparison",
                 metric_id=metric["metric_id"] if metric else None,
                 source_table=metric["source_table"] if metric else None,
                 subject_area=metric["subject_area"] if metric else None,
                 geo_level=geo_level,
+                geo_ids=geo_ids,
                 year=year,
             )
 
@@ -502,6 +538,8 @@ class IntentParser:
             return self.catalogs["metrics"]["median_home_value"]
         if "rent" in question:
             return self.catalogs["metrics"]["median_gross_rent"]
+        if "median household income" in question or "household income" in question:
+            return self.catalogs["metrics"]["median_hh_income"]
         if "income" in question:
             return self.catalogs["metrics"]["calc_income_pc"]
         return self.catalogs["metrics"]["pop_total"]
@@ -530,6 +568,31 @@ class IntentParser:
             if name in question:
                 return fips
         return None
+
+    def _infer_geo_ids(self, question: str, geo_level: str | None) -> list[str] | None:
+        """Return ordered geography ids when multiple named geographies are present."""
+        if geo_level not in {None, "state", "us"}:
+            return None
+
+        matches: list[tuple[int, str]] = []
+        for name, fips in self._STATE_NAME_TO_FIPS.items():
+            pattern = rf"\b{re.escape(name)}\b"
+            match = re.search(pattern, question)
+            if match is None:
+                continue
+            matches.append((match.start(), fips))
+
+        if len(matches) < 2:
+            return None
+
+        ordered_geo_ids: list[str] = []
+        seen: set[str] = set()
+        for _, fips in sorted(matches, key=lambda item: item[0]):
+            if fips in seen:
+                continue
+            ordered_geo_ids.append(fips)
+            seen.add(fips)
+        return ordered_geo_ids
 
     def _infer_geo_level(self, question: str) -> str | None:
         patterns = [
@@ -565,7 +628,7 @@ class IntentParser:
             return int(match.group(1))
         if re.search(r"\b(last|past)\s+\d+\s+years?\b", question) or "over the last" in question or "over the past" in question:
             return 2024
-        if "latest" in question or "current" in question:
+        if "latest" in question or "current" in question or "most recent" in question:
             return 2024
         return None
 
@@ -598,6 +661,73 @@ class IntentParser:
             payload.setdefault("year", 2024)
 
         return QueryPlan.model_validate(payload)
+
+    def _normalize_provider_plan(self, question: str, payload: dict[str, Any]) -> dict[str, Any]:
+        normalized = dict(payload)
+        question_normalized = self._normalize_text(question)
+
+        if normalized.get("question_type") == "benchmark" or normalized.get("template_id") == "benchmark":
+            if "target_geo_id" not in normalized and "geo_id" in normalized:
+                normalized["target_geo_id"] = normalized.pop("geo_id")
+            if "target_geo_level" not in normalized and "geo_level" in normalized:
+                normalized["target_geo_level"] = normalized.pop("geo_level")
+            if normalized.get("target_geo_id") and normalized.get("target_geo_level") in {None, "us"}:
+                normalized["target_geo_level"] = "state"
+            if normalized.get("benchmark_type") == "us":
+                normalized.setdefault("benchmark_geo_level", "us")
+                normalized.setdefault("comparison_label", "United States")
+            normalized.setdefault("template_id", "benchmark")
+
+        if (
+            ("compare" in question_normalized or "side-by-side" in question_normalized)
+            and any(token in question_normalized for token in ["over time", "trend"])
+            and normalized.get("geo_ids")
+        ):
+            normalized["question_type"] = "comparison"
+            normalized["template_id"] = "trend"
+
+        growth_metric = normalized.get("metric_id")
+        growth_override = self._precomputed_growth_override(growth_metric, question_normalized)
+        if growth_override is not None:
+            normalized.pop("metric_id", None)
+            normalized["base_metric_id"] = growth_override["base_metric_id"]
+            normalized["source_table"] = growth_override["source_table"]
+            normalized["template_id"] = "growth"
+            normalized["question_type"] = "trend" if normalized.get("question_type") == "trend" else "ranking"
+            normalized.setdefault("end_year", normalized.pop("year", None) or self._infer_latest_year_reference(question_normalized) or 2024)
+            normalized.setdefault("window_years", growth_override["window_years"])
+            normalized.setdefault("sort_direction", "desc")
+            normalized.setdefault("limit", 10)
+
+        if normalized.get("template_id") == "growth" and (
+            "median household income" in question_normalized or "household income" in question_normalized
+        ):
+            normalized["base_metric_id"] = "median_hh_income"
+            normalized.setdefault("source_table", "economics_income_wide")
+
+        return normalized
+
+    def _precomputed_growth_override(
+        self,
+        metric_id: str | None,
+        question: str,
+    ) -> dict[str, Any] | None:
+        if metric_id is None:
+            return None
+        if metric_id == "pop_growth_5yr":
+            return {
+                "base_metric_id": "pop_total",
+                "source_table": "population_demographics",
+                "window_years": 5,
+            }
+        if metric_id == "income_pc_growth_5yr":
+            base_metric_id = "median_hh_income" if "household income" in question else "calc_income_pc"
+            return {
+                "base_metric_id": base_metric_id,
+                "source_table": "economics_income_wide",
+                "window_years": 5,
+            }
+        return None
 
     def _load_examples(self) -> list[dict[str, Any]]:
         payload = yaml.safe_load(QUESTION_LIBRARY_PATH.read_text(encoding="utf-8"))

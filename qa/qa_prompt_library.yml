@@ -203,6 +203,26 @@ cases:
     benchmark_type_expected: null
     notes: "Comparison paraphrase with different states and housing metric."
 
+  - qa_case_id: qa_comp_004
+    question: "Compare California, Texas, and Florida on median household income in 2024."
+    category: golden
+    question_type_expected: comparison
+    metric_expected: median_hh_income
+    geo_level_expected: state
+    template_expected: compare_selected
+    benchmark_type_expected: null
+    notes: "Exact-match state comparison added to the example library. Good regression anchor for 2024 income comparisons."
+
+  - qa_case_id: qa_comp_005
+    question: "How do New York, Illinois, and Washington compare on median home values in 2024?"
+    category: golden
+    question_type_expected: comparison
+    metric_expected: median_home_value
+    geo_level_expected: state
+    template_expected: compare_selected
+    benchmark_type_expected: null
+    notes: "Exact-match state comparison added to the example library. Good regression anchor for 2024 home value comparisons."
+
   - qa_case_id: qa_comp_003
     question: "Show me a side-by-side comparison of population trends for Austin, Nashville, and Raleigh."
     category: provider_paraphrase

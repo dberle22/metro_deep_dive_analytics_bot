@@ -11,7 +11,8 @@ Tracks every QA loop: what was fixed, what cases changed, and what to fix next.
 | Loop 1 | 2026-04-30 | 10 | 2 | 6 | 2 | Baseline run. 10-case suite. |
 | Loop 2 | 2026-05-01 | 10 | 5 | 4 | 1 | Bar chart sort fixed. Distribution answer improved. |
 | Loop 3 | 2026-05-02 | 20 | 10 | 6 | 4 | Suite expanded to 20 cases. New templates added. |
-| Loop 4 | — | 20 | — | — | — | Pending. |
+| Loop 4 | 2026-05-08 | 20 | — | — | — | Fix implementation and validation pass completed; review loop not logged here. |
+| Loop 5 | 2026-05-11 | 20 | 15 | 3 | 2 | Most chart/data paths are stable; remaining issues are parser defaults, growth semantics, comparison framing, and outlier handling. |
 
 ---
 
@@ -19,28 +20,28 @@ Tracks every QA loop: what was fixed, what cases changed, and what to fix next.
 
 Each cell shows the review outcome: ✅ pass · ⚠️ partial · ❌ fail · — not in suite
 
-| Case ID | Question | Loop 1 | Loop 2 | Loop 3 |
-|---------|----------|--------|--------|--------|
-| qa_b_001 | Compare Florida's population to the US in 2024 | ⚠️ partial | ⚠️ partial | ❌ fail |
-| qa_b_002 | How does Texas household income stack up against the national average? | ⚠️ partial | ⚠️ partial | ❌ fail |
-| qa_b_003 | Is California's median home value above the US average in 2024? | ❌ fail | ❌ fail | ❌ fail |
-| qa_c_001 | What are the fastest growing places? | ❌ fail | ⚠️ partial | ⚠️ partial |
-| qa_c_002 | Show me how income compares | ✅ pass | ✅ pass | ✅ pass |
-| qa_r_001 | Which states had the highest total population in 2024? | ⚠️ partial | ✅ pass | ✅ pass |
-| qa_r_002 | What are the top 10 metros by median household income in 2024? | ⚠️ partial | ✅ pass | ✅ pass |
-| qa_t_001 | Show housing unit growth over time in California, Texas, and Florida. | ✅ pass | ✅ pass | ✅ pass |
-| qa_t_002 | How has median household income changed over time for states between 2015 and 2024? | ⚠️ partial | ⚠️ partial | ✅ pass |
-| qa_d_001 | Show the distribution of state home values in 2024. | ⚠️ partial | ✅ pass | ✅ pass |
-| qa_d_002 | What does the spread of median household income look like across states in 2024? | — | — | ✅ pass |
-| qa_d_003 | Show how vacancy rates are distributed across metros in 2023. | — | — | ✅ pass |
-| qa_g_001 | Which states had the fastest population growth over 5 years ending in 2024? | — | — | ⚠️ partial |
-| qa_g_002 | What are the fastest-growing states by population over the last five years? | — | — | ⚠️ partial |
-| qa_g_003 | Which metros had the biggest gains in median household income over the past 5 years? | — | — | ❌ fail |
-| qa_g_004 | Rank states by housing unit growth since 2019. | — | — | ⚠️ partial |
-| qa_g_005 | Which places are growing the fastest? | — | — | ✅ pass |
-| qa_comp_001 | Compare California, Texas, and Florida on median household income in 2024. | — | — | ⚠️ partial |
-| qa_comp_002 | How do New York, Illinois, and Washington compare on median home values in 2024? | — | — | ⚠️ partial |
-| qa_comp_003 | Show me a side-by-side comparison of population trends for Austin, Nashville, and Raleigh. | — | — | ✅ pass |
+| Case ID | Question | Loop 1 | Loop 2 | Loop 3 | Loop 5 |
+|---------|----------|--------|--------|--------|--------|
+| qa_b_001 | Compare Florida's population to the US in 2024 | ⚠️ partial | ⚠️ partial | ❌ fail | ⚠️ partial |
+| qa_b_002 | How does Texas household income stack up against the national average? | ⚠️ partial | ⚠️ partial | ❌ fail | ❌ fail |
+| qa_b_003 | Is California's median home value above the US average in 2024? | ❌ fail | ❌ fail | ❌ fail | ❌ fail |
+| qa_c_001 | What are the fastest growing places? | ❌ fail | ⚠️ partial | ⚠️ partial | ✅ pass |
+| qa_c_002 | Show me how income compares | ✅ pass | ✅ pass | ✅ pass | ✅ pass |
+| qa_r_001 | Which states had the highest total population in 2024? | ⚠️ partial | ✅ pass | ✅ pass | ✅ pass |
+| qa_r_002 | What are the top 10 metros by median household income in 2024? | ⚠️ partial | ✅ pass | ✅ pass | ✅ pass |
+| qa_t_001 | Show housing unit growth over time in California, Texas, and Florida. | ✅ pass | ✅ pass | ✅ pass | ✅ pass |
+| qa_t_002 | How has median household income changed over time for states between 2015 and 2024? | ⚠️ partial | ⚠️ partial | ✅ pass | ✅ pass |
+| qa_d_001 | Show the distribution of state home values in 2024. | ⚠️ partial | ✅ pass | ✅ pass | ✅ pass |
+| qa_d_002 | What does the spread of median household income look like across states in 2024? | — | — | ✅ pass | ✅ pass |
+| qa_d_003 | Show how vacancy rates are distributed across metros in 2023. | — | — | ✅ pass | ✅ pass |
+| qa_g_001 | Which states had the fastest population growth over 5 years ending in 2024? | — | — | ⚠️ partial | ✅ pass |
+| qa_g_002 | What are the fastest-growing states by population over the last five years? | — | — | ⚠️ partial | ⚠️ partial |
+| qa_g_003 | Which metros had the biggest gains in median household income over the past 5 years? | — | — | ❌ fail | ❌ fail |
+| qa_g_004 | Rank states by housing unit growth since 2019. | — | — | ⚠️ partial | ✅ pass |
+| qa_g_005 | Which places are growing the fastest? | — | — | ✅ pass | ✅ pass |
+| qa_comp_001 | Compare California, Texas, and Florida on median household income in 2024. | — | — | ⚠️ partial | ✅ pass |
+| qa_comp_002 | How do New York, Illinois, and Washington compare on median home values in 2024? | — | — | ⚠️ partial | ✅ pass |
+| qa_comp_003 | Show me a side-by-side comparison of population trends for Austin, Nashville, and Raleigh. | — | — | ✅ pass | ⚠️ partial |
 
 ---
 
@@ -120,6 +121,14 @@ Each cell shows the review outcome: ✅ pass · ⚠️ partial · ❌ fail · �
 
 The four fix areas below are ordered by expected impact.
 
+### Verification Status — 2026-05-08
+
+- [x] Fix 1 validated in code and runtime data: benchmark SQL includes reference-plus-inline fallback, `gold.benchmark_reference` contains `us` `pop_total` rows, and CBSA `median_hh_income` growth returns non-empty 2019→2024 results.
+- [x] Fix 2 validated in parser behavior: benchmark questions default to `year=2024`, relative phrases like "over the last five years" resolve to `end_year=2024`, and "since 2019" growth questions infer `window_years=5` without clarification.
+- [x] Fix 3 validated in chart config/render path: growth queries force `label_style="percent"` in Python, and the R bar renderer routes percent labels through `format_value_vector(..., style = "percent")`.
+- [x] Fix 4 validated in response assembly: comparison answers now name the leader and gaps, and benchmark answers explicitly state whether the target is above or below the benchmark.
+- [x] Validation pass completed with `.venv/bin/python -m unittest tests.test_pipeline.test_loop4_fixes -v` on 2026-05-08.
+
 ---
 
 ### Fix 1 — Benchmark Empty Results
@@ -182,3 +191,44 @@ These were called out in reviews but are data or ETL problems, not pipeline logi
 | Vacancy rate percentages stored inconsistently | qa_d_003 (Loop 3) | Some rows scaled 0–100, others 0–1. ETL standardization needed in the gold layer. |
 | 51-state line chart unreadable | qa_t_002 (all loops) | Technically correct but visually unusable. Future: add a default entity limit (e.g., top 10) for time-series with no explicit geo filter, with a note to the user. |
 | Outlier small places inflate growth rankings | qa_c_001, qa_g_005 | Very small-population places show extreme growth rates. Need a minimum population threshold filter in the growth template. |
+
+---
+
+## Loop 5 — 2026-05-11
+
+**Score: 15 pass / 3 partial / 2 fail (20 cases)**
+
+### What Was Learned
+
+- **Core data and chart paths are now mostly stable** — ranking, trend, distribution, and most comparison cases pass cleanly.
+- **Benchmark parsing is still the weakest parser area** — qa_b_002 and qa_b_003 should parse without clarification, but benchmark slot filling and yes/no benchmark phrasing are still brittle.
+- **Some LLM parses are correct in raw form but fail during normalization/finalization** — qa_b_002, qa_g_002, and qa_g_003 all show `raw_llm_response` payloads with `clarification_needed=false`, yet the saved run ends up as clarification. This points to plan normalization or required-slot validation rather than pure intent failure.
+- **Growth semantics still need cleanup** — qa_g_002 and qa_g_003 expose confusion between precomputed growth metrics, explicit growth templates, latest-year defaults, and household-vs-per-capita income mapping.
+- **Comparison framing over time is still semantically off** — qa_comp_003 returns the right multi-metro trend data and chart, but the answer is written like a generic trend summary instead of a side-by-side comparison.
+- **Outlier handling is now the main quality issue on place-level growth** — qa_c_001 and qa_g_005 pass operationally, but the results are still dominated by tiny places with implausibly large percentage changes.
+- **“Metro” likely still maps too broadly to all CBSAs** — qa_r_002 passes structurally, but top results such as Los Alamos and Nantucket suggest metro/micro filtering may be mixed.
+- **Wide trend charts need readability rules even when technically correct** — qa_t_002 passes, but a 52-line state chart is too dense to be useful without an automatic entity cap or display simplification.
+- **QA artifact hygiene is messy** — several parsed runs still contain stale `clarification.json` files, which makes review harder because the artifact directory implies both outcomes at once.
+
+### Fix Backlog From Loop 5
+
+Priority order is parser and plan correctness first, then answer quality, then review ergonomics.
+
+1. [x] **Normalize benchmark target slots from provider output** — provider benchmark payloads now map `geo_id` / `geo_level` onto `target_geo_id` / `target_geo_level` before validation so benchmark plans like qa_b_002 do not degrade into clarification during finalization.
+2. [x] **Default benchmark and latest-period questions to the most recent year** — benchmark questions no longer clarify for missing `year`, and relative growth prompts like “over the last five years” resolve to `end_year=2024` automatically.
+3. [x] **Strengthen benchmark detection for yes/no average phrasing** — benchmark fallbacks now still work when provider mode is forced but unavailable, so prompts like qa_b_003 can resolve through heuristics instead of collapsing into clarification.
+4. [x] **Fix household income metric selection across growth logic** — growth inference now prefers `median_hh_income` when the user explicitly asks for household income instead of falling back to `calc_income_pc`.
+5. [x] **Unify precomputed growth metrics with growth-template semantics** — provider plans that emit `pop_growth_5yr` or `income_pc_growth_5yr` now normalize into valid latest-period growth plans with `base_metric_id`, `end_year`, and `window_years`.
+6. [x] **Separate comparison intent from trend rendering more clearly** — side-by-side over-time comparisons can now preserve comparison semantics while still rendering with the trend template, and the answer text reflects trajectory differences instead of only the final leader.
+7. [x] **Make benchmark answers smarter for additive totals** — national-total benchmark answers like qa_b_001 now use share-of-US framing for additive metrics such as total population and housing units.
+8. [x] **Add outlier controls for place-level growth rankings** — place-level growth SQL now filters out tiny-baseline places so extreme percentage spikes from very small denominators do not dominate qa_c_001 and qa_g_005.
+9. [ ] **Filter “metros” to metro-only records** — still open. The current semantic layer does not expose a clean metro/micro classifier in the planner path, so this needs a data-model decision before code changes.
+10. [x] **Add readability limits for large trend charts** — chart rendering now trims broad unfiltered trend views to the top 10 geographies by latest-period value while preserving the full query result for tables and QA artifacts.
+11. [x] **Decide whether to prefer stored growth metrics or computed growth SQL** — current implementation standardizes on the growth template by converting provider-selected precomputed growth metrics into a computed growth plan, keeping downstream behavior consistent.
+12. [x] **Clean up QA run artifacts on success** — successful parsed runs now remove stale `clarification.json` files so each run directory reflects a single final outcome.
+
+### Suggested Next Execution Order
+
+- **Phase 1: parser/planner correctness** — backlog items 1 through 5
+- **Phase 2: answer and chart quality** — backlog items 6 through 10
+- **Phase 3: architecture and QA hygiene** — backlog items 11 and 12

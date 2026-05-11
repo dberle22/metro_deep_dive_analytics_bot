@@ -81,6 +81,25 @@ class Loop4GeneratorFixTests(unittest.TestCase):
         self.assertIn("benchmark_inline AS", rendered.sql)
         self.assertIn("WHERE NOT EXISTS (SELECT 1 FROM reference_benchmark)", rendered.sql)
 
+    def test_place_growth_sql_filters_tiny_outlier_places(self) -> None:
+        generator = QueryGenerator()
+
+        rendered = generator.render(
+            {
+                "template_id": "growth",
+                "question_type": "ranking",
+                "base_metric_id": "pop_total",
+                "source_table": "population_demographics",
+                "geo_level": "place",
+                "end_year": 2024,
+                "window_years": 5,
+                "sort_direction": "desc",
+                "limit": 10,
+            }
+        )
+
+        self.assertIn("AND prior_value >= 1000 AND metric_value >= 1000", rendered.sql)
+
 
 @unittest.skipIf(pd is None, "pandas is not installed in the active interpreter")
 class Loop4ResponseAndChartFixTests(unittest.TestCase):
@@ -153,7 +172,40 @@ class Loop4ResponseAndChartFixTests(unittest.TestCase):
             selection=None,
         )
 
-        self.assertIn("Florida is below United States", response.answer_text)
+        self.assertIn("Florida accounts for", response.answer_text)
+        self.assertIn("United States Total Population", response.answer_text)
+
+    def test_trend_comparison_answer_highlights_trajectory_differences(self) -> None:
+        assembler = ResponseAssembler()
+        dataframe = pd.DataFrame(
+            {
+                "geo_name": ["Austin", "Nashville", "Raleigh", "Austin", "Nashville", "Raleigh"],
+                "period": [2015, 2015, 2015, 2024, 2024, 2024],
+                "metric_value": [100.0, 90.0, 80.0, 160.0, 130.0, 125.0],
+                "metric_label": ["Total Population"] * 6,
+            }
+        )
+        plan = QueryPlan(
+            question_type="comparison",
+            metric_id="pop_total",
+            geo_level="cbsa",
+            geo_ids=["1", "2", "3"],
+            start_year=2015,
+            end_year=2024,
+            template_id="trend",
+        )
+
+        response = assembler.assemble(
+            question="Show me a side-by-side comparison of population trends for Austin, Nashville, and Raleigh.",
+            query_plan=plan,
+            dataframe=dataframe,
+            profile=None,
+            selection=None,
+        )
+
+        self.assertIn("Across 2015 to 2024", response.answer_text)
+        self.assertIn("finished highest", response.answer_text)
+        self.assertIn("grew fastest", response.answer_text)
 
 
 if __name__ == "__main__":

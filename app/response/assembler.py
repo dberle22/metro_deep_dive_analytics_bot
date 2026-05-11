@@ -59,7 +59,12 @@ class ResponseAssembler:
                 assumptions=self._assumptions(query_plan, profile, selection),
             )
 
-        if query_plan.question_type == "ranking":
+        if (
+            query_plan.template_id == "trend"
+            and self._looks_like_trend_comparison(question, query_plan, dataframe)
+        ):
+            answer = self._trend_comparison_answer(dataframe, metric_label)
+        elif query_plan.question_type == "ranking":
             top_row = dataframe.iloc[0]
             geo_name = top_row.get("geo_name", "The top geography")
             metric_value = top_row.get("metric_value")
@@ -105,7 +110,7 @@ class ResponseAssembler:
             else:
                 answer = f"The result shows the distribution of {metric_label} across {len(dataframe)} rows."
         elif query_plan.question_type == "benchmark" and "comparison_group" in dataframe.columns:
-            answer = self._benchmark_answer(dataframe, metric_label)
+            answer = self._benchmark_answer(query_plan, dataframe, metric_label)
         elif query_plan.question_type == "comparison":
             answer = self._comparison_answer(dataframe, metric_label)
         else:
@@ -179,7 +184,7 @@ class ResponseAssembler:
             f"Next are " + "; ".join(comparisons) + "."
         )
 
-    def _benchmark_answer(self, dataframe: pd.DataFrame, metric_label: str) -> str:
+    def _benchmark_answer(self, query_plan: QueryPlan, dataframe: pd.DataFrame, metric_label: str) -> str:
         grouped = dataframe.dropna(subset=["comparison_group"])
         if grouped.empty or "metric_value" not in grouped.columns:
             return f"The result compares the target geography against its benchmark for {metric_label}."
@@ -195,6 +200,20 @@ class ResponseAssembler:
         benchmark_name = benchmark_row.get("geo_name", "the benchmark")
         target_value = target_row.get("metric_value")
         benchmark_value = benchmark_row.get("metric_value")
+
+        if (
+            query_plan.benchmark_type == "us"
+            and query_plan.metric_id in {"pop_total", "hu_total"}
+            and isinstance(target_value, Real)
+            and isinstance(benchmark_value, Real)
+            and float(benchmark_value) != 0.0
+        ):
+            share = float(target_value) / float(benchmark_value)
+            return (
+                f"{target_name} accounts for {self._format_percent(share)} of {benchmark_name} "
+                f"{metric_label}: {self._format_value(target_value)} out of {self._format_value(benchmark_value)}."
+            )
+
         if not isinstance(target_value, Real) or not isinstance(benchmark_value, Real):
             return (
                 f"{target_name} is compared with {benchmark_name} for {metric_label}: "
@@ -213,4 +232,65 @@ class ResponseAssembler:
             f"{target_name} is {relation} {benchmark_name} for {metric_label}: "
             f"{self._format_value(target_value)} versus {self._format_value(benchmark_value)}, "
             f"a gap of {delta_text}."
+        )
+
+    def _looks_like_trend_comparison(
+        self,
+        question: str,
+        query_plan: QueryPlan,
+        dataframe: pd.DataFrame,
+    ) -> bool:
+        if "period" not in dataframe.columns or "geo_name" not in dataframe.columns:
+            return False
+        if len(dataframe["geo_name"].dropna().unique()) < 2:
+            return False
+        normalized_question = question.lower()
+        return (
+            query_plan.question_type == "comparison"
+            or "side-by-side" in normalized_question
+            or "compare" in normalized_question
+            or "comparison" in normalized_question
+        )
+
+    def _trend_comparison_answer(self, dataframe: pd.DataFrame, metric_label: str) -> str:
+        cleaned = dataframe.dropna(subset=["period", "geo_name", "metric_value"]).copy()
+        if cleaned.empty:
+            return f"The result summarizes {metric_label} across the selected geographies over time."
+
+        cleaned["period"] = cleaned["period"].astype(int)
+        start_period = int(cleaned["period"].min())
+        end_period = int(cleaned["period"].max())
+        start_df = cleaned[cleaned["period"] == start_period].set_index("geo_name")
+        end_df = cleaned[cleaned["period"] == end_period].set_index("geo_name")
+        shared_geos = [geo for geo in end_df.index if geo in start_df.index]
+        if not shared_geos:
+            return f"{metric_label} spans {start_period} to {end_period} across the selected geographies."
+
+        end_ranked = end_df.loc[shared_geos].sort_values(by="metric_value", ascending=False)
+        lead_geo = end_ranked.index[0]
+        lead_value = end_ranked.iloc[0]["metric_value"]
+
+        changes: list[tuple[str, float, float]] = []
+        for geo_name in shared_geos:
+            start_value = start_df.loc[geo_name, "metric_value"]
+            end_value = end_df.loc[geo_name, "metric_value"]
+            if not isinstance(start_value, Real) or not isinstance(end_value, Real):
+                continue
+            absolute_change = float(end_value) - float(start_value)
+            pct_change = 0.0 if float(start_value) == 0.0 else absolute_change / float(start_value)
+            changes.append((geo_name, absolute_change, pct_change))
+
+        if not changes:
+            return (
+                f"Across {start_period} to {end_period}, {lead_geo} led the selected geographies "
+                f"at {self._format_value(lead_value)}."
+            )
+
+        biggest_gain_geo, biggest_gain_value, _ = max(changes, key=lambda item: item[1])
+        fastest_growth_geo, _, fastest_growth_pct = max(changes, key=lambda item: item[2])
+        return (
+            f"Across {start_period} to {end_period}, {lead_geo} finished highest for {metric_label} "
+            f"at {self._format_value(lead_value)}. {biggest_gain_geo} added the most in absolute terms "
+            f"({self._format_value(biggest_gain_value)}), while {fastest_growth_geo} grew fastest "
+            f"at {self._format_percent(fastest_growth_pct)}."
         )

@@ -314,6 +314,10 @@ def save_run_artifacts(
             json.dumps(result.clarification.model_dump(), indent=2), encoding="utf-8"
         )
         saved["clarification_path"] = str(clarification_path)
+    else:
+        clarification_path = output_dir / "clarification.json"
+        if clarification_path.exists():
+            clarification_path.unlink()
 
     if result.query_plan is not None:
         plan_path = output_dir / "query_plan.json"

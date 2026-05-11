@@ -134,6 +134,34 @@ examples:
       geo_ids: ["12086", "12011", "12099"]
       year: 2024
 
+  - example_id: q09a_compare_selected_states_income_2024
+    natural_language_question: Compare California, Texas, and Florida on median household income in 2024.
+    expected_template_type: compare_selected
+    expected_sql_pattern: ["from gold.economics_income_wide", "case when base.geo_id = '06' then 0", "base.geo_id in ('06', '48', '12')"]
+    expected_chart_type: bar
+    structured_query_plan:
+      template_id: compare_selected
+      question_type: comparison
+      metric_id: median_hh_income
+      source_table: economics_income_wide
+      geo_level: state
+      geo_ids: ["06", "48", "12"]
+      year: 2024
+
+  - example_id: q09b_compare_selected_states_home_values_2024
+    natural_language_question: How do New York, Illinois, and Washington compare on median home values in 2024?
+    expected_template_type: compare_selected
+    expected_sql_pattern: ["from gold.housing_core_wide", "case when base.geo_id = '36' then 0", "base.geo_id in ('36', '17', '53')"]
+    expected_chart_type: bar
+    structured_query_plan:
+      template_id: compare_selected
+      question_type: comparison
+      metric_id: median_home_value
+      source_table: housing_core_wide
+      geo_level: state
+      geo_ids: ["36", "17", "53"]
+      year: 2024
+
   - example_id: q10_distribution_state_home_values
     natural_language_question: Show the distribution of state home values in 2024.
     expected_template_type: distribution

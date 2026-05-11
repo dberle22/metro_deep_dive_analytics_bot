@@ -1,7 +1,7 @@
 # Gold Layer Coverage Checklist
 
 Schema: `gold`
-Table count: 10
+Table count: 11
 
 ## Housing
 - [x] Dictionary: [gold__housing_core_wide.md](./gold__housing_core_wide.md)
@@ -32,6 +32,10 @@ Table count: 10
 ## Population
 - [x] Dictionary: [gold__population_demographics.md](./gold__population_demographics.md)
 - [x] `population_demographics`
+
+## Geography
+- [x] Dictionary: [gold__dim_geo.md](./gold__dim_geo.md)
+- [x] `dim_geo`
 
 ## Texas Schools
 - [x] Dictionary: [gold__tx_isd_metrics.md](./gold__tx_isd_metrics.md)

@@ -333,6 +333,7 @@ benchmark AS (
         metric = self._get_metric(plan["base_metric_id"])
         table_id = plan.get("source_table") or metric["source_table"]
         window_years = int(plan["window_years"])
+        outlier_clause = self._growth_outlier_clause(plan)
         sql = f"""
 {READ_ONLY_CTE_HINT}
 WITH series AS (
@@ -368,6 +369,7 @@ SELECT
   '{metric["metric_id"]}' AS base_metric_id
 FROM series
 WHERE year = {self._sql_literal(plan["end_year"])}
+  {outlier_clause}
 ORDER BY growth_value {self._sql_sort_direction(plan.get("sort_direction", "desc"))} NULLS LAST, geo_name ASC
 {self._render_limit_clause(plan.get("limit"))}
 """.strip()
@@ -467,6 +469,13 @@ ORDER BY growth_value {self._sql_sort_direction(plan.get("sort_direction", "desc
         if limit is None:
             return ""
         return f"LIMIT {self._validated_limit(limit)}"
+
+    def _growth_outlier_clause(self, plan: dict[str, Any]) -> str:
+        if plan.get("geo_level") != "place":
+            return ""
+        # Small place baselines generate misleading extreme growth rates; keep the ranking focused on
+        # places with at least a modest population in both the prior and current period.
+        return "AND prior_value >= 1000 AND metric_value >= 1000"
 
     def _rendered_query(
         self,

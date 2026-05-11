@@ -274,6 +274,31 @@ class AskCliTests(unittest.TestCase):
                 str(output_dir / "clarification.json"),
             )
 
+    def test_save_run_artifacts_removes_stale_clarification_on_success(self) -> None:
+        with tempfile.TemporaryDirectory() as tempdir:
+            output_dir = Path(tempdir) / "saved_run"
+            output_dir.mkdir()
+            stale_path = output_dir / "clarification.json"
+            stale_path.write_text('{"message":"stale"}', encoding="utf-8")
+
+            plan = QueryPlan(
+                question_type="ranking",
+                metric_id="pop_total",
+                geo_level="state",
+                year=2024,
+            )
+            result = OrchestrationResult(
+                question="Which states had the highest total population in 2024?",
+                parse_result=ParseResult(plan=plan),
+                query_plan=plan,
+            )
+
+            artifact_paths = save_run_artifacts(result, output_dir)
+
+            self.assertTrue((output_dir / "qa_run.json").exists())
+            self.assertNotIn("clarification_path", artifact_paths)
+            self.assertFalse(stale_path.exists())
+
     @patch("app.scripts.ask.run_question")
     def test_output_dir_flag_saves_artifacts(self, mock_run_question) -> None:
         with tempfile.TemporaryDirectory(dir=".") as tempdir:
